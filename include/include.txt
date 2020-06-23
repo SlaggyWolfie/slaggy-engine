@@ -1,0 +1,8 @@
+GLFW - v3.3.2
+---
+# Generated for OpenGL 3.3 from https://glad.dav1d.de/
+glad 
+KHR
+---
+GLM - v0.9.9.8
+Assimp - v5.0.1
