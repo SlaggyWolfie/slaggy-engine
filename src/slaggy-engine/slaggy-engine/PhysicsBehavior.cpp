@@ -1,7 +1,7 @@
 #include "PhysicsBehavior.hpp"
 
-#include "Entity.hpp"
-#include "Transform.hpp"
+#include <core/Entity.hpp>
+#include <core/Transform.hpp>
 
 namespace slaggy
 {

@@ -1,7 +1,6 @@
 ﻿#ifndef SE_ENTITY_HPP
 #define SE_ENTITY_HPP
 
-#include <vector>
 #include <memory>
 #include <unordered_map>
 #include <typeinfo>

@@ -2,8 +2,8 @@
 #ifndef SE_BEHAVIOUR_HPP
 #define SE_BEHAVIOUR_HPP
 
-#include "BaseComponent.hpp"
-#include "ICloneable.hpp"
+#include <core/BaseComponent.hpp>
+#include <core/ICloneable.hpp>
 
 namespace slaggy
 {

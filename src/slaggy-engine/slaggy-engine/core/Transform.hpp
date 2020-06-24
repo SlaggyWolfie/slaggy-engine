@@ -3,7 +3,7 @@
 #define TRANSFORM_HPP
 
 #include <glm/glm.hpp>
-#include "Behavior.hpp"
+#include <core/Behavior.hpp>
 
 namespace slaggy
 {

@@ -1,10 +1,13 @@
-#include "Entity.hpp"
-#include "HelloWorldBehavior.hpp"
 #include <iostream>
-#include "Transform.hpp"
+
 #include <glm/gtx/string_cast.hpp>
-#include "PhysicsBehavior.hpp"
-#include "SimplePhysicsBehavior.hpp"
+
+#include <core/Entity.hpp>
+#include <core/HelloWorldBehavior.hpp>
+#include <core/Transform.hpp>
+
+#include <PhysicsBehavior.hpp>
+#include <SimplePhysicsBehavior.hpp>
 
 using namespace slaggy;
 

@@ -1,7 +1,8 @@
 #pragma once
 #ifndef SIMPLE_PHYSICS_BEHAVIOR_HPP
 #define SIMPLE_PHYSICS_BEHAVIOR_HPP
-#include "Behavior.hpp"
+
+#include <core/Behavior.hpp>
 
 #include <glm/glm.hpp>
 
