@@ -3,6 +3,8 @@
 #include <iostream>
 #include "Transform.hpp"
 #include <glm/gtx/string_cast.hpp>
+#include "PhysicsBehavior.hpp"
+#include "SimplePhysicsBehavior.hpp"
 
 using namespace slaggy;
 
@@ -31,6 +33,15 @@ int main()
 	{
 		transform->translate(glm::vec3(25));
 		std::cout << "Position: " << glm::to_string(transform->position()) << std::endl;
+	}
+
+	SimplePhysicsBehavior* pb;
+	if (entity.addBehavior(pb))
+	{
+		pb->setConstantVelocity(glm::vec3(37));
+		pb->fixedUpdate();
+		pb->fixedUpdate();
+		std::cout << "Physics Position: " << glm::to_string(transform->position()) << std::endl;
 	}
 
 	return 0;

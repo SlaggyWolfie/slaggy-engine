@@ -11,6 +11,7 @@ namespace slaggy
 
 	void Entity::addBehavior(Behavior* behavior)
 	{
+		behavior->_entity = this;
 		_behaviors.try_emplace(typeid(behavior), behavior);
 	}
 	

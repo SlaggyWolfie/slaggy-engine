@@ -7,9 +7,11 @@
 #include <typeinfo>
 #include <typeindex>
 
+#include "Behavior.hpp"
+
 namespace slaggy
 {
-	class Behavior;
+	//class Behavior;
 
 	class Entity final
 	{
@@ -63,6 +65,8 @@ namespace slaggy
 			return nullptr;
 
 		TBehavior* behavior = new TBehavior;
+		static_cast<Behavior*>(behavior)->_entity = this;
+		
 		_behaviors.try_emplace(typeid(TBehavior), behavior);
 		return behavior;
 	}
@@ -76,6 +80,8 @@ namespace slaggy
 			return false;
 
 		behavior = new TBehavior;
+		static_cast<Behavior*>(behavior)->_entity = this;
+		
 		return _behaviors.try_emplace(typeid(TBehavior), behavior).second;
 	}
 
