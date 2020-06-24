@@ -5,7 +5,7 @@
 
 namespace slaggy
 {
-	class HelloWorldBehavior : public slaggy::Behavior, ICloneableTemplate<HelloWorldBehavior>
+	class HelloWorldBehavior : public Behavior, public ICloneableTemplate<HelloWorldBehavior>
 	{
 	public:
 		~HelloWorldBehavior() = default;

@@ -1,7 +1,8 @@
 #include "Entity.hpp"
 #include "HelloWorldBehavior.hpp"
 #include <iostream>
-#include <string>
+#include "Transform.hpp"
+#include <glm/gtx/string_cast.hpp>
 
 using namespace slaggy;
 
@@ -24,6 +25,13 @@ int main()
 	std::cout << "Test Has: " << entity.hasBehavior<HelloWorldBehavior>() << std::endl;
 	std::cout << "Got component & component says: ";
 	if (entity.getBehavior(b)) b->update();
+
+	Transform* transform;
+	if (entity.addBehavior(transform)) 
+	{
+		transform->translate(glm::vec3(25));
+		std::cout << "Position: " << glm::to_string(transform->position()) << std::endl;
+	}
 
 	return 0;
 }
