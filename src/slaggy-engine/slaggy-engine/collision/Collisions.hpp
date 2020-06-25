@@ -21,8 +21,8 @@ namespace slaggy
 		static bool intersection(OBB& one, OBB& other);
 
 	private:
-		static bool checkRadius(Shape& one, Shape& other);
-		static bool checkAABB(BB& one, BB& other);
+		static bool sphereTest(Shape& lhs, Shape& rhs);
+		static bool aabbTest(BB& lhs, BB& rhs);
 	};
 }
 

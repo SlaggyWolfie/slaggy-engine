@@ -1,11 +1,13 @@
 #include "BB.hpp"
+#include <algorithm>
 
 namespace slaggy
 {
 	void BB::setHalfSize(const glm::vec3 halfSize)
 	{
 		_halfSize = halfSize;
-		_radius = glm::length(halfSize);
+		_radius = std::max(_halfSize.x, _halfSize.y);
+		//_radius = glm::length(halfSize);
 	}
 
 	void BB::setSize(const glm::vec3 size)

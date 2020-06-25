@@ -12,39 +12,39 @@
 
 namespace slaggy
 {
-	bool Collisions::checkRadius(Shape& one, Shape& other)
+	bool Collisions::sphereTest(Shape& lhs, Shape& rhs)
 	{
-		return glm::distance(one.center(), other.center()) <= one.radius() + other.radius();
+		return glm::distance(lhs.center(), rhs.center()) <= lhs.radius() + rhs.radius();
 	}
 
-	bool Collisions::checkAABB(BB& one, BB& other)
+	bool Collisions::aabbTest(BB& lhs, BB& rhs)
 	{
-		return one.max().x > other.min().x && one.min().x < other.max().x
-			&& one.max().y > other.min().y && one.min().y < other.max().y
-			&& one.max().z > other.min().z && one.min().z < other.max().z;
+		const glm::vec3 lmin = lhs.min();
+		const glm::vec3 lmax = lhs.max();
+		const glm::vec3 rmin = rhs.min();
+		const glm::vec3 rmax = rhs.max();
+
+		return lmax.x > rmin.x && lmin.x < rmax.x
+			&& lmax.y > rmin.y && lmin.y < rmax.y
+			&& lmax.z > rmin.z && lmin.z < rmax.z;
 	}
 
 	bool Collisions::intersection(Sphere& one, Sphere& other)
 	{
-		return checkRadius(one, other);
-		//return glm::distance(one.center(), other.center()) <= one.radius() + other.radius();
+		return sphereTest(one, other);
 	}
 
 	bool Collisions::intersection(Sphere& sphere, AABB& aabb)
 	{
-		//very simple and incorrect
-		//return glm::distance(sphere.center(), aabb.center()) <= sphere.radius() + aabb.radius();
-
-		//Sphere check to prevent overexertion
-		const bool radiusCheck = checkRadius(sphere, aabb);
+		const bool radiusCheck = sphereTest(sphere, aabb);
 		if (!radiusCheck) return false;
 
-		//Better
 		const glm::vec3& sphereCenter = sphere.center();
 		const float sphereRadius = sphere.radius();
 
-		//Arvo's algorithm
+		// Arvo's algorithm
 		float distance, squareDistance = 0;
+
 		//find the square of the distance
 		//from the sphere to the box
 		for (int i = 0; i < 3; i++)
@@ -60,25 +60,21 @@ namespace slaggy
 				squareDistance += distance * distance;
 			}
 		}
+
 		return squareDistance <= sphereRadius * sphereRadius;
 	}
 
 	bool Collisions::intersection(Sphere& sphere, OBB& obb)
 	{
-		//very simple and incorrect
-		//return glm::distance(sphere.center(), obb.center()) <= sphere.radius() + obb.radius();
-
-		//Sphere check to prevent overexertion
-		const bool radiusCheck = checkRadius(sphere, obb);
+		const bool radiusCheck = sphereTest(sphere, obb);
 		if (!radiusCheck) return false;
 
-		//Better
-		//const OBB& box = obb;
 		const glm::vec3& sphereCenter = sphere.center();
 		const float sphereRadius = sphere.radius();
 
 		//Arvo's algorithm
 		float distance, squareDistance = 0;
+
 		//find the square of the distance
 		//from the sphere to the box
 		for (int i = 0; i < 3; i++)
@@ -94,29 +90,24 @@ namespace slaggy
 				squareDistance += distance * distance;
 			}
 		}
+
 		return squareDistance <= sphereRadius * sphereRadius;
 	}
 
-	bool Collisions::intersection(AABB& one, AABB& other)
+	bool Collisions::intersection(AABB& lhs, AABB& rhs)
 	{
-		//Sphere check to prevent overexertion
-		const bool radiusCheck = checkRadius(one, other);
-		if (!radiusCheck) return false;
+		if (!sphereTest(lhs, rhs)) return false;
 
-		return checkAABB(one, other);
+		return aabbTest(lhs, rhs);
 	}
 
 	bool Collisions::intersection(AABB& aabb, OBB& obb)
 	{
-		//std::cout << "Collision Between OBBs" << std::endl;
-		//std::cout << "Test Collision Between OBBs" << std::endl;
-
-		//Sphere check to prevent overexertion
-		const bool radiusCheck = checkRadius(aabb, obb);
+		const bool radiusCheck = sphereTest(aabb, obb);
 		if (!radiusCheck) return false;
 
-		//AABB check to prevent overexertion
-		bool aabbCheck = checkAABB(aabb, obb);
+		// TODO ???
+		bool aabbCheck = aabbTest(aabb, obb);
 		if (!aabbCheck) return false;
 
 		const glm::vec3 oneCenter = aabb.center(); // object's pos = collider center
@@ -176,31 +167,31 @@ namespace slaggy
 		return true;
 	}
 
-	bool Collisions::intersection(OBB& one, OBB& other)
+	bool Collisions::intersection(OBB& lhs, OBB& rhs)
 	{
-		//std::cout << "Collision Between OBBs" << std::endl;
-		//std::cout << "Test Collision Between OBBs" << std::endl;
-
-		//Sphere check to prevent overexertion
-		bool radiusCheck = checkRadius(one, other);
+		bool radiusCheck = sphereTest(lhs, rhs);
 		if (!radiusCheck) return false;
 
-		//AABB check to prevent overexertion
-		const bool aabbCheck = checkAABB(one, other);
+		// TODO ???
+		const bool aabbCheck = aabbTest(lhs, rhs);
 		if (!aabbCheck) return false;
 
-		const glm::vec3 oneCenter = one.center(); // object's pos = collider center
-		glm::mat4 oneTransform = glm::scale(one.transform(), one.halfSize()); // scaling for halfsize
-		const glm::vec3 otherCenter = other.center();
-		glm::mat4 otherTransform = glm::scale(other.transform(), other.halfSize()); // scaling for halfsize
+		const glm::vec3 lhsCenter = lhs.center(); // object's pos = collider center
+		glm::mat4 lhsTransform = glm::scale(lhs.transform(), lhs.halfSize()); // scaling for halfsize
+		const glm::vec3 rhsCenter = rhs.center();
+		glm::mat4 rhsTransform = glm::scale(rhs.transform(), rhs.halfSize()); // scaling for halfsize
 
 		for (int a = 0; a < 3; a++)
 		{
-			glm::vec3 l = glm::vec3(oneTransform[a]); // one axis to project on
-			float tl = std::abs(glm::dot(l, otherCenter) - glm::dot(l, oneCenter)); // center distance
-			float ra = std::abs(glm::dot(l, glm::vec3(oneTransform[0]))) + std::abs(glm::dot(l, glm::vec3(oneTransform[1]))) + std::abs(glm::dot(l, glm::vec3(oneTransform[2])));
-			float rb = std::abs(glm::dot(l, glm::vec3(otherTransform[0]))) + std::abs(glm::dot(l, glm::vec3(otherTransform[1]))) + std::abs(glm::dot(l, glm::vec3(otherTransform[2])));
-			float penetration = (ra + rb) - tl;
+			glm::vec3 l = glm::vec3(lhsTransform[a]); // one axis to project on
+			float tl = std::abs(glm::dot(l, rhsCenter) - glm::dot(l, lhsCenter)); // center distance
+			float ra = std::abs(glm::dot(l, glm::vec3(lhsTransform[0])))
+				+ std::abs(glm::dot(l, glm::vec3(lhsTransform[1])))
+				+ std::abs(glm::dot(l, glm::vec3(lhsTransform[2])));
+			float rb = std::abs(glm::dot(l, glm::vec3(rhsTransform[0])))
+				+ std::abs(glm::dot(l, glm::vec3(rhsTransform[1])))
+				+ std::abs(glm::dot(l, glm::vec3(rhsTransform[2])));
+			float penetration = ra + rb - tl;
 			if (penetration <= 0)
 			{ // no overlap
 
@@ -211,11 +202,15 @@ namespace slaggy
 
 		for (int b = 0; b < 3; b++)
 		{
-			glm::vec3 l = glm::vec3(otherTransform[b]); // other axis to project on
-			float tl = std::abs(glm::dot(l, otherCenter) - glm::dot(l, oneCenter)); // center distance
-			float ra = std::abs(glm::dot(l, glm::vec3(oneTransform[0]))) + std::abs(glm::dot(l, glm::vec3(oneTransform[1]))) + std::abs(glm::dot(l, glm::vec3(oneTransform[2])));
-			float rb = std::abs(glm::dot(l, glm::vec3(otherTransform[0]))) + std::abs(glm::dot(l, glm::vec3(otherTransform[1]))) + std::abs(glm::dot(l, glm::vec3(otherTransform[2])));
-			float penetration = (ra + rb) - tl;
+			glm::vec3 l = glm::vec3(rhsTransform[b]); // rhs axis to project on
+			float tl = std::abs(glm::dot(l, rhsCenter) - glm::dot(l, lhsCenter)); // center distance
+			float ra = std::abs(glm::dot(l, glm::vec3(lhsTransform[0])))
+				+ std::abs(glm::dot(l, glm::vec3(lhsTransform[1])))
+				+ std::abs(glm::dot(l, glm::vec3(lhsTransform[2])));
+			float rb = std::abs(glm::dot(l, glm::vec3(rhsTransform[0])))
+				+ std::abs(glm::dot(l, glm::vec3(rhsTransform[1])))
+				+ std::abs(glm::dot(l, glm::vec3(rhsTransform[2])));
+			float penetration = ra + rb - tl;
 			if (penetration <= 0)
 			{ // no overlap
 				//std::cout << "2 No Collision Between OBBs" << std::endl;
@@ -224,15 +219,19 @@ namespace slaggy
 		}
 		for (int a = 0; a < 3; a++)
 		{
-			glm::vec3 aAxis = glm::vec3(oneTransform[a]);
+			glm::vec3 aAxis = glm::vec3(lhsTransform[a]);
 			for (int b = 0; b < 3; b++) {
-				glm::vec3 bAxis = glm::vec3(otherTransform[b]);
+				glm::vec3 bAxis = glm::vec3(rhsTransform[b]);
 				if (aAxis != bAxis) {
 					glm::vec3 l = glm::cross(aAxis, bAxis); // has flaw when axis are same, result in (0,0,0), solved by if
-					float tl = std::abs(glm::dot(l, otherCenter) - glm::dot(l, oneCenter)); // center distance
-					float ra = std::abs(glm::dot(l, glm::vec3(oneTransform[0]))) + std::abs(glm::dot(l, glm::vec3(oneTransform[1]))) + std::abs(glm::dot(l, glm::vec3(oneTransform[2])));
-					float rb = std::abs(glm::dot(l, glm::vec3(otherTransform[0]))) + std::abs(glm::dot(l, glm::vec3(otherTransform[1]))) + std::abs(glm::dot(l, glm::vec3(otherTransform[2])));
-					float penetration = (ra + rb) - tl;
+					float tl = std::abs(glm::dot(l, rhsCenter) - glm::dot(l, lhsCenter)); // center distance
+					float ra = std::abs(glm::dot(l, glm::vec3(lhsTransform[0])))
+						+ std::abs(glm::dot(l, glm::vec3(lhsTransform[1])))
+						+ std::abs(glm::dot(l, glm::vec3(lhsTransform[2])));
+					float rb = std::abs(glm::dot(l, glm::vec3(rhsTransform[0])))
+						+ std::abs(glm::dot(l, glm::vec3(rhsTransform[1])))
+						+ std::abs(glm::dot(l, glm::vec3(rhsTransform[2])));
+					float penetration = ra + rb - tl;
 					if (penetration <= 0)
 					{ // no overlap
 						//std::cout << "3 No Collision Between OBBs" << std::endl;
