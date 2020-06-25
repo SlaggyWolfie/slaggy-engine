@@ -16,9 +16,9 @@ namespace slaggy
 		static bool intersection(Sphere& one, Sphere& other);
 		static bool intersection(Sphere& sphere, AABB& aabb);
 		static bool intersection(Sphere& sphere, OBB& obb);
-		static bool intersection(AABB& one, AABB& other);
+		static bool intersection(AABB& lhs, AABB& rhs);
 		static bool intersection(AABB& aabb, OBB& obb);
-		static bool intersection(OBB& one, OBB& other);
+		static bool intersection(OBB& lhs, OBB& rhs);
 
 	private:
 		static bool sphereTest(Shape& lhs, Shape& rhs);
