@@ -2,21 +2,22 @@
 #ifndef OBB_HPP
 #define OBB_HPP
 
-#include <collision/BB.hpp>
+#include <collision/volumes/Box.hpp>
 
 namespace slaggy
 {
-	class OBB : public BB
+	class OBB : public Box
 	{
 	public:
-		glm::mat4 transform() const;
-
 		bool intersects(Shape& shape) override;
 		bool intersects(Sphere& sphere) override;
 		bool intersects(AABB& aabb) override;
 		bool intersects(OBB& obb) override;
 		
 		void render() override;
+		Behavior* clone() override;
+		bool isInside(glm::vec3 point) const override;
+		glm::vec3 closestPointTo(glm::vec3 point) const override;
 	};
 }
 #endif

@@ -15,8 +15,13 @@ namespace slaggy
 		return _centerOffset;
 	}
 
-	glm::vec3 Shape::center()
+	glm::vec3 Shape::center() const
 	{
 		return entity().getBehavior<Transform>()->position() + _centerOffset;
+	}
+
+	glm::mat4 Shape::transformationMatrix() const
+	{
+		return entity().getBehavior<Transform>()->transformationMatrix();
 	}
 }

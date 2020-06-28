@@ -141,41 +141,43 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="collision\AABB.cpp" />
-    <ClCompile Include="collision\BB.cpp" />
+    <ClCompile Include="collision\volumes\AABB.cpp" />
+    <ClCompile Include="collision\volumes\Box.cpp" />
+    <ClCompile Include="collision\spatial\StaticOctree.cpp" />
     <ClCompile Include="programs\CoreTestProgram.cpp" />
     <ClCompile Include="core\Behavior.cpp" />
-    <ClCompile Include="collision\Collisions.cpp" />
+    <ClCompile Include="collision\Geometry.cpp" />
     <ClCompile Include="core\Entity.cpp" />
     <ClCompile Include="core\HelloWorldBehavior.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="collision\OBB.cpp" />
+    <ClCompile Include="collision\volumes\OBB.cpp" />
     <ClCompile Include="PhysicsBehavior.cpp" />
-    <ClCompile Include="collision\Shape.cpp" />
+    <ClCompile Include="collision\volumes\Shape.cpp" />
     <ClCompile Include="programs\HelloTriangleProgram.cpp" />
     <ClCompile Include="SimplePhysicsBehavior.cpp" />
-    <ClCompile Include="collision\Sphere.cpp" />
+    <ClCompile Include="collision\volumes\Sphere.cpp" />
     <ClCompile Include="core\Transform.cpp" />
     <ClCompile Include="stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="collision\AABB.hpp" />
-    <ClInclude Include="collision\BB.hpp" />
+    <ClInclude Include="collision\volumes\AABB.hpp" />
+    <ClInclude Include="collision\volumes\Box.hpp" />
+    <ClInclude Include="collision\spatial\StaticOctree.hpp" />
     <ClInclude Include="programs\CoreTestProgram.hpp" />
     <ClInclude Include="core\Behavior.hpp" />
-    <ClInclude Include="collision\Collisions.hpp" />
+    <ClInclude Include="collision\Geometry.hpp" />
     <ClInclude Include="core\Entity.hpp" />
     <ClInclude Include="core\HelloWorldBehavior.hpp" />
     <ClInclude Include="core\ICloneable.hpp" />
     <ClInclude Include="core\BaseComponent.hpp" />
-    <ClInclude Include="collision\OBB.hpp" />
+    <ClInclude Include="collision\volumes\OBB.hpp" />
     <ClInclude Include="PhysicsBehavior.hpp" />
-    <ClInclude Include="collision\Shape.hpp" />
+    <ClInclude Include="collision\volumes\Shape.hpp" />
     <ClInclude Include="programs\HelloTriangleProgram.hpp" />
     <ClInclude Include="programs\Program.hpp" />
     <ClInclude Include="SimplePhysicsBehavior.hpp" />
-    <ClInclude Include="collision\Sphere.hpp" />
+    <ClInclude Include="collision\volumes\Sphere.hpp" />
     <ClInclude Include="core\Transform.hpp" />
     <ClInclude Include="stb_image.h" />
   </ItemGroup>
