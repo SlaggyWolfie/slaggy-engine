@@ -27,6 +27,27 @@ namespace slaggy
 		return Geometry::intersection(obb, *this);
 	}
 
+	// TODO Horror
+	glm::vec3 OBB::min() const
+	{
+		return glm::vec3(transformationMatrix() * glm::vec4(-halfSize(), 1));
+	}
+
+	glm::vec3 OBB::max() const
+	{
+		return glm::vec3(transformationMatrix() * glm::vec4(halfSize(), 1));
+	}
+
+	glm::vec3 OBB::unorientedMin() const
+	{
+		return Box::min();
+	}
+
+	glm::vec3 OBB::unorientedMax() const
+	{
+		return Box::max();
+	}
+
 	void OBB::render()
 	{
 		//glm::mat4 model = getWorldTransform();

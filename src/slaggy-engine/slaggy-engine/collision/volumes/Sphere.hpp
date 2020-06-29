@@ -16,11 +16,6 @@ namespace slaggy
 
 		void setRadius(float radius);
 		float radius() const override;
-		
-		glm::vec3 halfSize() const override;
-		glm::vec3 size() const override;
-		glm::vec3 min() const override;
-		glm::vec3 max() const override;
 
 		bool isInside(glm::vec3 point) const override;
 		glm::vec3 closestPointTo(glm::vec3 point) const override;

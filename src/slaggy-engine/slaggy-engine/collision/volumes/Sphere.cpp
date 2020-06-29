@@ -34,26 +34,6 @@ namespace slaggy
 		return Geometry::intersection(*this, obb);
 	}
 
-	glm::vec3 Sphere::halfSize() const
-	{
-		return glm::vec3(_radius);
-	}
-
-	glm::vec3 Sphere::size() const
-	{
-		return halfSize() * 2.0f;
-	}
-
-	glm::vec3 Sphere::min() const
-	{
-		return center() - halfSize();
-	}
-
-	glm::vec3 Sphere::max() const
-	{
-		return center() + halfSize();
-	}
-
 	bool Sphere::isInside(const glm::vec3 point) const
 	{
 		return Geometry::distanceSqr(center(), point) < radius() * radius();

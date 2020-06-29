@@ -13,6 +13,11 @@ namespace slaggy
 		bool intersects(Sphere& sphere) override;
 		bool intersects(AABB& aabb) override;
 		bool intersects(OBB& obb) override;
+
+		glm::vec3 min() const override;
+		glm::vec3 max() const override;
+		glm::vec3 unorientedMin() const;
+		glm::vec3 unorientedMax() const;
 		
 		void render() override;
 		Behavior* clone() override;

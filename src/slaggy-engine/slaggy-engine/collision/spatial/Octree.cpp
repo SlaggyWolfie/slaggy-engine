@@ -1,8 +1,8 @@
-#include "StaticOctree.hpp"
+#include "Octree.hpp"
 
 namespace slaggy
 {
-	void StaticOctree::build(const glm::vec3& center, const unsigned currentDepth, const unsigned maxDepth, StaticOctree* parent)
+	void Octree::build(const glm::vec3& center, const unsigned currentDepth, const unsigned maxDepth, Octree* parent)
 	{
 		_position = center;
 
@@ -10,7 +10,7 @@ namespace slaggy
 
 		for (unsigned i = 0; i < 8; ++i)
 		{
-			_nodes[i] = std::make_unique<StaticOctree>();
+			_nodes[i] = std::make_unique<Octree>();
 
 			// example: i = 3 (0b010) -> cell = {0, 1, 0}
 			glm::vec3 cell(i & 1, i & 2, i & 4);
@@ -20,24 +20,21 @@ namespace slaggy
 		}
 	}
 
-	Behavior* StaticOctree::clone()
+	Behavior* Octree::clone()
 	{
 		return nullptr;
 	}
 
-	glm::vec3 StaticOctree::center() const
+	glm::vec3 Octree::center() const
 	{
 		return _position;
 	}
 
-	bool StaticOctree::insert(Box* box)
+	bool Octree::insert(Shape* shape)
 	{
-		// TODO
-		return false;
-		 
 		if (_nodes[0] == nullptr)
 		{
-			_objects.insert(box);
+			_objects.insert(shape);
 			return true;
 		}
 
@@ -59,8 +56,8 @@ namespace slaggy
 
 		// TODO TEST
 
-		const glm::vec3 distMax = box->max() - _position;
-		const glm::vec3 distMin = box->min() - _position;
+		const glm::vec3 distMax = shape->max() - _position;
+		const glm::vec3 distMin = shape->min() - _position;
 
 		glm::uvec3 distMaxNormalized = glm::uvec3(glm::sign(distMax) / 2.0f + 0.5f);
 		glm::uvec3 unn = glm::uvec3(glm::sign(distMin) / 2.0f + 0.5f);
@@ -76,10 +73,10 @@ namespace slaggy
 		}
 
 		// (true) we found it, boys!
-		if (octantMax == octantMin) return _nodes[octantMax]->insert(box);
+		if (octantMax == octantMin) return _nodes[octantMax]->insert(shape);
 
 		// (false) no one else can handle, it must be me.
-		_objects.insert(box);
+		_objects.insert(shape);
 		return true;
 	}
 
@@ -95,32 +92,48 @@ namespace slaggy
 	//		&& lmax.z > rmax.z && rmin.z > lmin.z;
 	//}
 
-	void StaticOctree::clear()
+	void Octree::clear()
 	{
 		_objects.clear();
 	}
 
-	std::vector<CollisionPair> StaticOctree::collisions()
+	std::vector<CollisionPair> Octree::collisions()
 	{
 		const bool isLeaf = _nodes[0] == nullptr;
+		const bool isEmpty = _objects.empty();
+
+		if (isLeaf && isEmpty) return std::vector<CollisionPair>();
 
 		std::vector<CollisionPair> pairs;
+
 		if (isLeaf)
 		{
-			if (_objects.empty()) return pairs;
+			for (unsigned i = 0; i < _objects.size(); ++i)
+				for (unsigned j = i + 1; j < _objects.size(); ++j)
+					pairs.emplace_back(_objects[i], _objects[j]);
 
-			for (auto i_iter = _objects.begin(); i_iter != _objects.end(); ++i_iter)
-				for (auto j_iter = std::next(i_iter, 1); j_iter != _objects.end(); ++j_iter)
-					pairs.emplace_back(*i_iter, *j_iter);
+			return pairs;
 		}
-		else 
+
+		for (unsigned i = 0; i < 8; ++i)
 		{
-			for (unsigned i = 0; i < 8; ++i)
-			{
-				std::vector<CollisionPair> childPairs = _nodes[i]->collisions();
-				if (!childPairs.empty())
-					std::copy(childPairs.begin(), childPairs.end(), std::back_inserter(pairs));
-			}
+			std::vector<CollisionPair> childPairs = _nodes[i]->collisions();
+			if (!childPairs.empty())
+				std::copy(childPairs.begin(), childPairs.end(), std::back_inserter(pairs));
+		}
+
+		if (!isEmpty)
+		{
+			std::vector<CollisionPair> parentPairs;
+			for (const auto& shape : _objects)
+				for (const auto& pair : pairs)
+					parentPairs.emplace_back(shape, pair.lhs);
+
+			std::copy(parentPairs.begin(), parentPairs.end(), std::back_inserter(pairs));
+
+			for (unsigned i = 0; i < _objects.size(); ++i)
+				for (unsigned j = i + 1; j < _objects.size(); ++j)
+					pairs.emplace_back(_objects[i], _objects[j]);
 		}
 
 		return pairs;

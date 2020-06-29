@@ -1,6 +1,6 @@
 #pragma once
-#ifndef STATIC_OCTREE_HPP
-#define STATIC_OCTREE_HPP
+#ifndef OCTREE_HPP
+#define OCTREE_HPP
 
 #include <collision/volumes/AABB.hpp>
 
@@ -19,15 +19,15 @@ namespace slaggy
 		CollisionPair(Shape* lhs, Shape* rhs) : lhs(lhs), rhs(rhs) { }
 	};
 	
-	class StaticOctree final : public AABB
+	class Octree final : public AABB
 	{
 	public:
-		void build(const glm::vec3& center, unsigned currentDepth, unsigned maxDepth, StaticOctree* parent);
+		void build(const glm::vec3& center, unsigned currentDepth, unsigned maxDepth, Octree* parent);
 
 		Behavior* clone() override;
 		glm::vec3 center() const override;
 
-		bool insert(Box* box);
+		bool insert(Shape* shape);
 		void clear();
 		//bool remove(Shape* shape);
 
@@ -36,7 +36,7 @@ namespace slaggy
 	private:
 		glm::vec3 _position = glm::vec3(0);
 		
-		std::array<std::unique_ptr<StaticOctree>, 8> _nodes { };
+		std::array<std::unique_ptr<Octree>, 8> _nodes { };
 		std::unordered_set<Shape*> _objects { };
 
 		//bool encompasses(const Shape& shape) const;

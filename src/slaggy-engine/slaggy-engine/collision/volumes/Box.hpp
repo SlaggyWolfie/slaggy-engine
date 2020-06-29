@@ -21,10 +21,10 @@ namespace slaggy
 		void setSize(glm::vec3 size);
 
 		float radius() const override;
-		glm::vec3 halfSize() const override;
-		glm::vec3 size() const override;
-		glm::vec3 min() const override;
-		glm::vec3 max() const override;
+		virtual glm::vec3 halfSize() const;
+		virtual glm::vec3 size() const;
+		virtual glm::vec3 min() const;
+		virtual glm::vec3 max() const;
 	};
 }
 #endif

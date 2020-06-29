@@ -141,9 +141,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="collision\spatial\StaticOctree.cpp" />
     <ClCompile Include="collision\volumes\AABB.cpp" />
     <ClCompile Include="collision\volumes\Box.cpp" />
-    <ClCompile Include="collision\spatial\StaticOctree.cpp" />
     <ClCompile Include="programs\CoreTestProgram.cpp" />
     <ClCompile Include="core\Behavior.cpp" />
     <ClCompile Include="collision\Geometry.cpp" />
@@ -159,11 +159,12 @@
     <ClCompile Include="collision\volumes\Sphere.cpp" />
     <ClCompile Include="core\Transform.cpp" />
     <ClCompile Include="stb_image.cpp" />
+    <ClCompile Include="collision\spatial\Octree.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="collision\spatial\StaticOctree.hpp" />
     <ClInclude Include="collision\volumes\AABB.hpp" />
     <ClInclude Include="collision\volumes\Box.hpp" />
-    <ClInclude Include="collision\spatial\StaticOctree.hpp" />
     <ClInclude Include="programs\CoreTestProgram.hpp" />
     <ClInclude Include="core\Behavior.hpp" />
     <ClInclude Include="collision\Geometry.hpp" />
@@ -180,6 +181,7 @@
     <ClInclude Include="collision\volumes\Sphere.hpp" />
     <ClInclude Include="core\Transform.hpp" />
     <ClInclude Include="stb_image.h" />
+    <ClInclude Include="collision\spatial\Octree.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

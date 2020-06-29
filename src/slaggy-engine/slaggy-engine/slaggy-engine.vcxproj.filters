@@ -48,9 +48,6 @@
     <ClCompile Include="programs\CoreTestProgram.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="collision\spatial\StaticOctree.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="collision\volumes\AABB.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -67,6 +64,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="collision\Geometry.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="collision\spatial\Octree.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="collision\spatial\StaticOctree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -107,9 +110,6 @@
     <ClInclude Include="programs\CoreTestProgram.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="collision\spatial\StaticOctree.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="collision\volumes\AABB.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -126,6 +126,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="collision\Geometry.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="collision\spatial\Octree.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="collision\spatial\StaticOctree.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
