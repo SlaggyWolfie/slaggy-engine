@@ -11,11 +11,14 @@
 #include <engine/Camera.hpp>
 
 #include <collision/spatial/Octree.hpp>
+#include "utils/Random.hpp"
+#include "OctreeMovement.hpp"
 
 namespace slaggy
 {
 	int OctreeProgram::run()
 	{
+#pragma region init
 		// Initialize GLFW context with OpenGL version 3.3 using the Core OpenGL profile
 		glfwInit();
 
@@ -84,6 +87,7 @@ namespace slaggy
 		//stbi_set_flip_vertically_on_load(1);
 
 		//----- end of setup -----//
+#pragma endregion 
 
 		const glm::mat4 identity(1);
 		glm::mat4 view, projection;
@@ -91,7 +95,7 @@ namespace slaggy
 
 		//camera = new Camera(glm::vec3(0, 0, 12));
 		camera = new Camera(glm::vec3(0));
-		camera->forward = (glm::vec3(1, 0, 0));
+		camera->forward = glm::vec3(1, 0, 0);
 		camera->updateForward();
 
 		Octree octree;
@@ -100,19 +104,38 @@ namespace slaggy
 		//Octree o;
 		//o.build(glm::vec3(0), glm::vec3(0.1f), 0, 0, { });
 
+		unsigned objectAmount = 0;
+		std::vector<std::unique_ptr<Entity>> objects;
+		std::vector<Shape*> shapeColliders;
+
+		//const unsigned frames = 2400;
+		const unsigned frames = 12400;
+
 		// Program Loop (Render Loop)
-		while (!glfwWindowShouldClose(window))
+		//while (!glfwWindowShouldClose(window))
+		for (unsigned i = 0; i < frames && !glfwWindowShouldClose(window); ++i)
 		{
+			//if (i % 60 == 0) std::cout << i / 60 << std::endl;
+
+			// time
 			const auto currentFrame = float(glfwGetTime());
 			deltaTime = currentFrame - lastFrame;
 			lastFrame = currentFrame;
 
-			// Pre-input calculations | Critical
+			// input
+			process_input(window);
+
+			// do
+
+			if (i < 1000)
+				createObject(objects, shapeColliders, glm::vec3(0), 5, 10);
+
+			octree.build(glm::vec3(0), glm::vec3(5), 0, 3, shapeColliders);
+
+			// Calc
 			view = camera->viewMatrix();
 			projection = glm::perspective(glm::radians(camera->fov),
 				float(INITIAL_SCREEN_WIDTH) / float(INITIAL_SCREEN_HEIGHT), 0.1f, 100.0f);
-
-			process_input(window);
 
 			// rendering
 			glClearColor(_clearColor.r, _clearColor.g, _clearColor.b, _clearColor.a);
@@ -134,6 +157,46 @@ namespace slaggy
 
 		glfwTerminate();
 		return 0;
+	}
+
+	void OctreeProgram::createObject(
+		std::vector<std::unique_ptr<Entity>>& objectContainer,
+		std::vector<Shape*>& colliderContainer,
+		const glm::vec3& spherePosition, const float sphereRadius, const float speed) const
+	{
+		glm::vec3 position = glm::vec3(
+			Random::range(-1.0f, 1.0f, 2) * 2,
+			Random::range(-1.0f, 1.0f, 2) * 2,
+			Random::range(-1.0f, 1.0f, 2) * 2);
+
+		position *= sphereRadius;
+		position += spherePosition;
+
+		// calc direction
+		glm::vec3 velocity = glm::vec3(
+			Random::range(-1.0f, 1.0f, 2),
+			Random::range(-1.0f, 1.0f, 2),
+			Random::range(-1.0f, 1.0f, 2));
+
+		velocity *= speed;
+
+		auto entity = new Entity;
+		objectContainer.emplace_back(entity);
+
+		Transform* transform = nullptr;
+		entity->addComponent(transform);
+		transform->translate(position);
+
+		const glm::vec3 axis = glm::vec3(
+			Random::range(-1.0f, 1.0f, 2),
+			Random::range(-1.0f, 1.0f, 2),
+			Random::range(-1.0f, 1.0f, 2));
+
+		const auto angle = static_cast<float>(Random::range(0, 360));
+		transform->rotate(glm::normalize(axis), angle);
+
+		entity->addComponent<OctreeMovement>()->velocity = velocity;
+		//colliderContainer.push_back(entity->addComponent<SphereCollider>());
 	}
 
 	void OctreeProgram::framebuffer_size_callback(GLFWwindow* window, const int width, const int height) const

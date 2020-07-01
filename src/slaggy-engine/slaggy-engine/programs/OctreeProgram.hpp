@@ -12,10 +12,13 @@
 #include <GLFW/glfw3.h>
 
 #include <glm/glm.hpp>
+#include <vector>
 
 namespace slaggy
 {
 	class Camera;
+	class Entity;
+	class Shape;
 
 	class OctreeProgram : public Program
 	{
@@ -28,7 +31,7 @@ namespace slaggy
 		const int INITIAL_SCREEN_HEIGHT = 600;
 
 		// green-ish color
-		const color4 _defaultClearColor{ 0.2f, 0.3f, 0.3f, 1.0f };
+		const color4 _defaultClearColor{ 0.1f, 0.1f, 0.1f, 1.0f };
 		color4 _clearColor = _defaultClearColor;
 
 		float mix_ratio = 0.2f;
@@ -61,6 +64,11 @@ namespace slaggy
 		}
 
 		int run() override;
+
+		void createObject(
+			std::vector<std::unique_ptr<Entity>>& objectContainer,
+			std::vector<Shape*>& colliderContainer,
+			const glm::vec3& spherePosition, float sphereRadius, float speed) const;
 	};
 }
 #endif EMPTY_PROGRAM_HPP

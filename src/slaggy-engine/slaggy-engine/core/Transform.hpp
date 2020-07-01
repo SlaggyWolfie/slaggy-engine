@@ -7,7 +7,7 @@
 
 namespace slaggy
 {
-	class Transform : public Component, public ICloneableTemplate<Transform>
+	class Transform final : public Component, public ICloneableTemplate<Transform>
 	{
 	public:
 		void setPosition(const glm::vec3& position);
@@ -37,11 +37,11 @@ namespace slaggy
 
 		//void lookAt(Transform* lookAtTarget, const glm::vec3& up = glm::vec3(0, 1, 0));
 		void translate(const glm::vec3& translation);
-		//void rotate(const glm::vec3& axis, float angleRotation);
+		void rotate(const glm::vec3& axis, float angleRotation);
 		//void rotate(const glm::vec3& eulerAngles);
 		//void rotateAround(const glm::vec3& axis, float angleRotation, const glm::vec3& point);
 		//void rotate(const glm::vec3& eulerAngles, Space space = World);
-		//void scale(const glm::vec3& scaler);
+		void scale(const glm::vec3& v);
 		//void scaleWithPositions(const glm::vec3& scale);
 
 		//void makeStatic();

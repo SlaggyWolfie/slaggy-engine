@@ -83,6 +83,16 @@ namespace slaggy
 		_transformationMatrix = glm::translate(_transformationMatrix, translation);
 	}
 
+	void Transform::rotate(const glm::vec3& axis, const float angleRotation)
+	{
+		_transformationMatrix = glm::rotate(_transformationMatrix, angleRotation, axis);
+	}
+
+	void Transform::scale(const glm::vec3& v)
+	{
+		_transformationMatrix = glm::scale(_transformationMatrix, v);
+	}
+
 	Transform* Transform::clone()
 	{
 		auto transform = new Transform();
