@@ -1,141 +1,110 @@
 #include "Octree.hpp"
+#include "utils/BoxDebug.hpp"
+#include <glm/ext/matrix_transform.inl>
 
 namespace slaggy
 {
-	void Octree::build(const glm::vec3& center, const unsigned currentDepth, const unsigned maxDepth, Octree* parent)
+	glm::vec3 Octree::cell(const unsigned index)
 	{
-		_position = center;
+		// example: i = 3 (0b011) -> cell = {1, 1, 0}
 
-		if (currentDepth >= maxDepth) return;
+		//const glm::vec3 cell(index & 1, index & 2, index & 4);
+		//return (cell * 2.0f - glm::vec3(1)) * glm::vec3(0.5f);
+
+		const glm::vec3 cell(index & 1, (index & 2) / 2, (index & 4) / 4);
+		return cell - glm::vec3(0.5f);
+	};
+
+	void Octree::build(const glm::vec3 center, const glm::vec3 halfSize, const unsigned currentDepth, const unsigned maxDepth, const std::vector<Shape*>& objects)
+	{
+		_currentDepth = currentDepth;
+		_transform = std::make_unique<Transform>();
+		transform().setPosition(center);
+		setHalfSize(halfSize);
+
+		if (objects.empty()) return;
+		std::vector<Shape*> intersecting;
+		auto pred = [&](Shape* shape) { return shape->intersects(*this); };
+
+		std::copy_if(objects.begin(), objects.end(), intersecting.begin(), pred);
+
+		if (intersecting.empty()) return;
+		
+		if (intersecting.size() == 1)
+		{
+			_objects.insert(*objects.begin());
+			return;
+		}
+
+		if (currentDepth == maxDepth)
+		{
+			_objects.insert(intersecting.begin(), intersecting.end());
+			return;
+		}
 
 		for (unsigned i = 0; i < 8; ++i)
 		{
 			_nodes[i] = std::make_unique<Octree>();
-
-			// example: i = 3 (0b010) -> cell = {0, 1, 0}
-			glm::vec3 cell(i & 1, i & 2, i & 4);
-			cell -= glm::vec3(0.5f);
-
-			_nodes[i]->build(center + cell * halfSize() / 2.0f, currentDepth + 1, maxDepth, this);
+			const glm::vec3 childHalfSize = Octree::halfSize() / 2.0f;
+			const glm::vec3 cellLocation = cell(i);
+			_nodes[i]->build(center + cellLocation * childHalfSize, childHalfSize, currentDepth + 1, maxDepth, intersecting);
 		}
 	}
 
-	Behavior* Octree::clone()
+	void Octree::reset()
 	{
-		return nullptr;
-	}
-
-	glm::vec3 Octree::center() const
-	{
-		return _position;
-	}
-
-	bool Octree::insert(Shape* shape)
-	{
-		if (_nodes[0] == nullptr)
-		{
-			_objects.insert(shape);
-			return true;
-		}
-
-		// We check if min and max points reside within
-		// an octree. If they both do, then they are within this quadrant,
-		// if not, then they must be within the parent.
-		//
-		// This is calculated by comparing both points to the centre mathematically.
-		// We then convert the resulting vectors to between a range of [-1; 1] using
-		// the sign() function, which range we convert to another range of [0; 1].
-		// Due to the nature of sign(), it's more like just -1 and 1, but whatever,
-		// which then become 0 and 1, which we use to calculate the octant (3D space
-		// "quadrant").
-		//
-		// (-x, y, -z) -> (-1, 1, -1) -> (0, 1, 0) -> octant 3 (0b010)
-		//
-		// One caveat for now, is that this only implicitly checks the size of the
-		// inserted object.
-
-		// TODO TEST
-
-		const glm::vec3 distMax = shape->max() - _position;
-		const glm::vec3 distMin = shape->min() - _position;
-
-		glm::uvec3 distMaxNormalized = glm::uvec3(glm::sign(distMax) / 2.0f + 0.5f);
-		glm::uvec3 unn = glm::uvec3(glm::sign(distMin) / 2.0f + 0.5f);
-
-		unsigned octantMax = 0, octantMin = 0;
-
-		// 0..2
-		for (unsigned i = 0; i < 3; ++i)
-		{
-			const auto power = static_cast<unsigned>(std::pow(static_cast<unsigned>(2), i));
-			octantMax += distMaxNormalized[i] * power;
-			octantMin += unn[i] * power;
-		}
-
-		// (true) we found it, boys!
-		if (octantMax == octantMin) return _nodes[octantMax]->insert(shape);
-
-		// (false) no one else can handle, it must be me.
-		_objects.insert(shape);
-		return true;
-	}
-
-	//bool StaticOctree::encompasses(const Shape& shape) const
-	//{
-	//	const glm::vec3 lmin = min();
-	//	const glm::vec3 lmax = max();
-	//	const glm::vec3 rmin = shape.min();
-	//	const glm::vec3 rmax = shape.max();
-
-	//	return lmax.x > rmax.x && rmin.x > lmin.x
-	//		&& lmax.y > rmax.y && rmin.y > lmin.y
-	//		&& lmax.z > rmax.z && rmin.z > lmin.z;
-	//}
-
-	void Octree::clear()
-	{
+		for (auto&& node : _nodes) node.release();
 		_objects.clear();
 	}
 
 	std::vector<CollisionPair> Octree::collisions()
 	{
 		const bool isLeaf = _nodes[0] == nullptr;
-		const bool isEmpty = _objects.empty();
-
-		if (isLeaf && isEmpty) return std::vector<CollisionPair>();
 
 		std::vector<CollisionPair> pairs;
-
 		if (isLeaf)
 		{
-			for (unsigned i = 0; i < _objects.size(); ++i)
-				for (unsigned j = i + 1; j < _objects.size(); ++j)
-					pairs.emplace_back(_objects[i], _objects[j]);
+			if (_objects.empty()) return pairs;
 
-			return pairs;
+			for (auto i_iter = _objects.begin(); i_iter != _objects.end(); ++i_iter)
+				for (auto j_iter = std::next(i_iter, 1); j_iter != _objects.end(); ++j_iter)
+					pairs.emplace_back(*i_iter, *j_iter);
 		}
-
-		for (unsigned i = 0; i < 8; ++i)
+		else
 		{
-			std::vector<CollisionPair> childPairs = _nodes[i]->collisions();
-			if (!childPairs.empty())
-				std::copy(childPairs.begin(), childPairs.end(), std::back_inserter(pairs));
-		}
-
-		if (!isEmpty)
-		{
-			std::vector<CollisionPair> parentPairs;
-			for (const auto& shape : _objects)
-				for (const auto& pair : pairs)
-					parentPairs.emplace_back(shape, pair.lhs);
-
-			std::copy(parentPairs.begin(), parentPairs.end(), std::back_inserter(pairs));
-
-			for (unsigned i = 0; i < _objects.size(); ++i)
-				for (unsigned j = i + 1; j < _objects.size(); ++j)
-					pairs.emplace_back(_objects[i], _objects[j]);
+			for (unsigned i = 0; i < 8; ++i)
+			{
+				std::vector<CollisionPair> childPairs = _nodes[i]->collisions();
+				if (!childPairs.empty())
+					std::copy(childPairs.begin(), childPairs.end(), std::back_inserter(pairs));
+			}
 		}
 
 		return pairs;
+	}
+
+	void Octree::render(const glm::vec3& color, const glm::mat4& view, const glm::mat4& proj) const
+	{
+		const glm::mat4 model = glm::scale(scaledTransformationMatrix(), glm::vec3(1 - 0.05f * float(_currentDepth)));
+		BoxDebug::instance().render(color, model, view, proj);
+	}
+
+	void Octree::renderWithChildren(const glm::mat4& view, const glm::mat4& proj) const
+	{
+		//const glm::vec3 color =
+		//	glm::vec3(1 - 0.1f * float(_currentDepth))
+		//	* glm::vec3(_currentDepth & 1, (_currentDepth & 2) / 2, (_currentDepth & 4) / 4);
+		
+		const glm::vec3 color = glm::vec3(1);
+		
+		render(color, view, proj);
+
+		for (auto&& child : _nodes)
+			if (child) child->renderWithChildren(view, proj);
+	}
+
+	Transform& Octree::transform() const
+	{
+		return *_transform;
 	}
 }

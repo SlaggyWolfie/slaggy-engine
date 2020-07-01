@@ -5,7 +5,7 @@
 #include <glm/glm.hpp>
 
 namespace slaggy
-{
+{	
 	class Shape;
 	class Box;
 	class OBB;
@@ -28,6 +28,8 @@ namespace slaggy
 
 		static float distanceSqr(glm::vec3 lhs, glm::vec3 rhs);
 		static float magnitudeSqr(glm::vec3 v);
+
+		static void reflectVelocity(glm::vec3& lhs, glm::vec3& rhs);
 	};
 }
 

@@ -9,18 +9,16 @@ namespace slaggy
 	class OBB : public Box
 	{
 	public:
-		bool intersects(Shape& shape) override;
-		bool intersects(Sphere& sphere) override;
-		bool intersects(AABB& aabb) override;
-		bool intersects(OBB& obb) override;
+		bool intersects(const Shape& shape) const override;
+		bool intersects(const Sphere& sphere) const override;
+		bool intersects(const AABB& aabb) const override;
+		bool intersects(const OBB& obb) const override;
 
 		glm::vec3 min() const override;
 		glm::vec3 max() const override;
 		glm::vec3 unorientedMin() const;
 		glm::vec3 unorientedMax() const;
 		
-		void render() override;
-		Behavior* clone() override;
 		bool isInside(glm::vec3 point) const override;
 		glm::vec3 closestPointTo(glm::vec3 point) const override;
 	};

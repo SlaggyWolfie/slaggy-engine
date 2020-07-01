@@ -10,14 +10,11 @@ namespace slaggy
 	class AABB : public Box
 	{
 	public:
-		bool intersects(Shape& shape) override;
-		bool intersects(Sphere& sphere) override;
-		bool intersects(AABB& aabb) override;
-		bool intersects(OBB& obb) override;
-
-		void render() override;
+		bool intersects(const Shape& shape) const override;
+		bool intersects(const Sphere& sphere) const override;
+		bool intersects(const AABB& aabb) const override;
+		bool intersects(const OBB& obb) const override;
 		
-		Behavior* clone() override;
 		bool isInside(glm::vec3 point) const override;
 		glm::vec3 closestPointTo(glm::vec3 point) const override;
 	};

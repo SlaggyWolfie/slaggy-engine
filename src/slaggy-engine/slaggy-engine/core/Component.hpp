@@ -5,21 +5,18 @@
 namespace slaggy
 {
 	class Entity;
+	class Transform;
 
-	class BaseComponent
+	class Component
 	{
 		friend class Entity;
 
 	public:
 		Entity& entity() const;
+		Transform* transform() const;
 
 	private:
 		Entity* _entity = nullptr;;
 	};
-
-	inline Entity& BaseComponent::entity() const
-	{
-		return *_entity;
-	}
 }
 #endif

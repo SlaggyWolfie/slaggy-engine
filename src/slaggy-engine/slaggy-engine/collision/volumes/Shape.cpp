@@ -1,17 +1,23 @@
 #include "Shape.hpp"
 
-#include <core/Entity.hpp>
+#include <glm/ext/matrix_transform.hpp>
+
 #include <core/Transform.hpp>
 
 namespace slaggy
 {
 	glm::vec3 Shape::center() const
 	{
-		return entity().getBehavior<Transform>()->position();
+		return transform().position();
 	}
 
 	glm::mat4 Shape::transformationMatrix() const
 	{
-		return entity().getBehavior<Transform>()->transformationMatrix();
+		return transform().transformationMatrix();
+	}
+
+	glm::mat4 Shape::scaledTransformationMatrix() const
+	{
+		return glm::scale(transformationMatrix(), glm::vec3(radius()));
 	}
 }

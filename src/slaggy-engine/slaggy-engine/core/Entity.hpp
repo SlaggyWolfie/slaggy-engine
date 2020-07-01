@@ -6,7 +6,8 @@
 #include <typeinfo>
 #include <typeindex>
 
-#include "Behavior.hpp"
+#include <core/Behavior.hpp>
+#include <core/Transform.hpp>
 
 namespace slaggy
 {
@@ -37,13 +38,15 @@ namespace slaggy
 		bool removeBehavior();
 
 		template <class TBehavior>
-		TBehavior* getBehavior();
+		TBehavior* getBehavior() const;
 
 		template <class TBehavior>
-		bool hasBehavior();
+		bool hasBehavior() const;
 
 		template <class TBehavior>
-		bool getBehavior(TBehavior*& behavior);
+		bool getBehavior(TBehavior*& behavior) const;
+
+		Transform* transform() const;
 
 	private:
 		std::unordered_map<std::type_index, std::unique_ptr<Behavior>> _behaviors;
@@ -53,7 +56,7 @@ namespace slaggy
 		void addBehavior(Behavior* behavior);
 
 		template <class TBehavior>
-		bool isBehavior();
+		static bool isBehavior();
 	};
 
 	template <class TBehavior>
@@ -98,18 +101,27 @@ namespace slaggy
 	}
 
 	template <class TBehavior>
-	TBehavior* Entity::getBehavior()
+	TBehavior* Entity::getBehavior() const
 	{
 		if (!isBehavior<TBehavior>()) return nullptr;
 
 		const auto iter = _behaviors.find(typeid(TBehavior));
 		if (iter == _behaviors.end()) return nullptr;
 
-		return static_cast<TBehavior*>(iter->second.get());
+		return dynamic_cast<TBehavior*>(iter->second.get());
+	}
+
+	template<>
+	inline Transform* Entity::getBehavior() const
+	{
+		const auto iter = _behaviors.find(typeid(Transform));
+		if (iter == _behaviors.end()) return nullptr;
+
+		return dynamic_cast<Transform*>(iter->second.get());
 	}
 
 	template <class TBehavior>
-	bool Entity::getBehavior(TBehavior*& behavior)
+	bool Entity::getBehavior(TBehavior*& behavior) const
 	{
 		behavior = nullptr;
 		if (!isBehavior<TBehavior>()) return false;
@@ -117,12 +129,12 @@ namespace slaggy
 		const auto iter = _behaviors.find(typeid(TBehavior));
 		if (iter == _behaviors.end()) return false;
 		
-		behavior = static_cast<TBehavior*>(iter->second.get());
+		behavior = dynamic_cast<TBehavior*>(iter->second.get());
 		return true;
 	}
 
 	template <class TBehavior>
-	bool Entity::hasBehavior()
+	bool Entity::hasBehavior() const
 	{
 		return getBehavior<TBehavior>() != nullptr;
 	}

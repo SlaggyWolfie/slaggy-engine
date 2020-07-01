@@ -9,7 +9,7 @@
 #include <core/Transform.hpp>
 
 #include <PhysicsBehavior.hpp>
-#include <SimplePhysicsBehavior.hpp>
+#include <OctreeMovement.hpp>
 
 using namespace slaggy;
 
@@ -40,10 +40,10 @@ int CoreTestProgram::run()
 		std::cout << "Position: " << glm::to_string(transform->position()) << std::endl;
 	}
 
-	SimplePhysicsBehavior* pb;
+	OctreeMovement* pb;
 	if (entity.addBehavior(pb))
 	{
-		pb->setConstantVelocity(glm::vec3(37));
+		pb->velocity = glm::vec3(37);
 		pb->fixedUpdate();
 		pb->fixedUpdate();
 		std::cout << "Physics Position: " << glm::to_string(transform->position()) << std::endl;

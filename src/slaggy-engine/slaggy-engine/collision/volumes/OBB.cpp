@@ -1,33 +1,31 @@
 #include "OBB.hpp"
 
-#include <core/Entity.hpp>
-#include <core/Transform.hpp>
+#include <glm/ext/matrix_transform.hpp>
 
 #include <collision/Geometry.hpp>
 
 namespace slaggy
 {
-	bool OBB::intersects(Shape& shape)
+	bool OBB::intersects(const Shape& shape) const
 	{
 		return shape.intersects(*this);
 	}
 
-	bool OBB::intersects(Sphere& sphere)
+	bool OBB::intersects(const Sphere& sphere) const
 	{
 		return Geometry::intersection(sphere, *this);
 	}
 
-	bool OBB::intersects(AABB& aabb)
+	bool OBB::intersects(const AABB& aabb) const
 	{
 		return Geometry::intersection(aabb, *this);
 	}
 
-	bool OBB::intersects(OBB& obb)
+	bool OBB::intersects(const OBB& obb) const
 	{
 		return Geometry::intersection(obb, *this);
 	}
 
-	// TODO Horror
 	glm::vec3 OBB::min() const
 	{
 		return glm::vec3(transformationMatrix() * glm::vec4(-halfSize(), 1));
@@ -47,31 +45,13 @@ namespace slaggy
 	{
 		return Box::max();
 	}
-
-	void OBB::render()
-	{
-		//glm::mat4 model = getWorldTransform();
-		//model = glm::translate(model, getCenterOffset());
-		//model = glm::scale(model, _halfSize);
-
-		//Octree::getVisualBox()->render(
-		//	glm::vec3(1, 0, 0),
-		//	model,
-		//	world->getMainCamera()->getView(),
-		//	world->getMainCamera()->getProjection());
-	}
-
-	Behavior* OBB::clone()
-	{
-		return nullptr;
-	}
-
+	
 	bool OBB::isInside(const glm::vec3 point) const
 	{
 		const glm::vec3 direction = point - center();
 		const glm::mat4 transform = transformationMatrix();
 		const glm::vec3 size_ = size();
-		
+
 		for (unsigned i = 0; i < 3; ++i)
 		{
 			const glm::vec3 axis = glm::vec3(transform[i]);
@@ -98,7 +78,7 @@ namespace slaggy
 
 			point += axis * distance;
 		}
-		
+
 		return point;
 	}
 }

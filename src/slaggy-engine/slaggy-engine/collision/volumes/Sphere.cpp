@@ -14,22 +14,22 @@ namespace slaggy
 		return _radius;
 	}
 
-	bool Sphere::intersects(Shape& shape)
+	bool Sphere::intersects(const Shape& shape) const
 	{
 		return shape.intersects(*this);
 	}
 
-	bool Sphere::intersects(Sphere& sphere)
+	bool Sphere::intersects(const Sphere& sphere) const
 	{
 		return Geometry::intersection(*this, sphere);
 	}
 
-	bool Sphere::intersects(AABB& aabb)
+	bool Sphere::intersects(const AABB& aabb) const
 	{
 		return Geometry::intersection(*this, aabb);
 	}
 
-	bool Sphere::intersects(OBB& obb)
+	bool Sphere::intersects(const OBB& obb) const
 	{
 		return Geometry::intersection(*this, obb);
 	}
@@ -45,5 +45,5 @@ namespace slaggy
 		return position + glm::normalize(point - position) * radius();
 	}
 
-	void Sphere::render() {	}
+	void Sphere::render(const glm::mat4& view, const glm::mat4& proj) const {	}
 }

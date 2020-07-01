@@ -9,6 +9,8 @@
 #include <collision/volumes/AABB.hpp>
 #include <collision/volumes/OBB.hpp>
 
+#include <OctreeMovement.hpp>
+
 namespace slaggy
 {
 	bool Geometry::sphereTest(const Shape& lhs, const Shape& rhs)
@@ -185,5 +187,12 @@ namespace slaggy
 	float Geometry::magnitudeSqr(const glm::vec3 v)
 	{
 		return v.x * v.x + v.y * v.y + v.z * v.z;
+	}
+
+	void Geometry::reflectVelocity(glm::vec3& lhs, glm::vec3& rhs)
+	{
+		const glm::vec3 total = lhs - rhs;
+		lhs = lhs - total;
+		rhs = lhs + total;
 	}
 }

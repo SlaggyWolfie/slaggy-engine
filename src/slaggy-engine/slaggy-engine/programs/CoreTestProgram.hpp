@@ -1,9 +1,15 @@
 #pragma once
+#ifndef CORE_TEST_PROGRAM_HPP
+#define CORE_TEST_PROGRAM_HPP
+
 #include "Program.hpp"
 
-class CoreTestProgram : public Program
+namespace slaggy
 {
-public:
-	int run() override;
-};
-
+	class CoreTestProgram : public Program
+	{
+	public:
+		int run() override;
+	};
+}
+#endif

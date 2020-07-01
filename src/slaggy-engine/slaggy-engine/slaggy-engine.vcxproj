@@ -105,7 +105,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp-vc142-mtd.lib;glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -141,9 +141,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="engine\Camera.cpp" />
+    <ClCompile Include="engine\Mesh.cpp" />
+    <ClCompile Include="engine\Model.cpp" />
+    <ClCompile Include="engine\Shader.cpp" />
+    <ClCompile Include="programs\OctreeProgram.cpp" />
+    <ClCompile Include="utils\BoxDebug.cpp" />
     <ClCompile Include="collision\spatial\StaticOctree.cpp" />
     <ClCompile Include="collision\volumes\AABB.cpp" />
     <ClCompile Include="collision\volumes\Box.cpp" />
+    <ClCompile Include="core\Component.cpp" />
     <ClCompile Include="programs\CoreTestProgram.cpp" />
     <ClCompile Include="core\Behavior.cpp" />
     <ClCompile Include="collision\Geometry.cpp" />
@@ -155,13 +162,19 @@
     <ClCompile Include="PhysicsBehavior.cpp" />
     <ClCompile Include="collision\volumes\Shape.cpp" />
     <ClCompile Include="programs\HelloTriangleProgram.cpp" />
-    <ClCompile Include="SimplePhysicsBehavior.cpp" />
+    <ClCompile Include="OctreeMovement.cpp" />
     <ClCompile Include="collision\volumes\Sphere.cpp" />
     <ClCompile Include="core\Transform.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="collision\spatial\Octree.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="engine\Camera.hpp" />
+    <ClInclude Include="engine\Mesh.hpp" />
+    <ClInclude Include="engine\Model.hpp" />
+    <ClInclude Include="engine\Shader.hpp" />
+    <ClInclude Include="programs\OctreeProgram.hpp" />
+    <ClInclude Include="utils\BoxDebug.hpp" />
     <ClInclude Include="collision\spatial\StaticOctree.hpp" />
     <ClInclude Include="collision\volumes\AABB.hpp" />
     <ClInclude Include="collision\volumes\Box.hpp" />
@@ -171,17 +184,21 @@
     <ClInclude Include="core\Entity.hpp" />
     <ClInclude Include="core\HelloWorldBehavior.hpp" />
     <ClInclude Include="core\ICloneable.hpp" />
-    <ClInclude Include="core\BaseComponent.hpp" />
+    <ClInclude Include="core\Component.hpp" />
     <ClInclude Include="collision\volumes\OBB.hpp" />
     <ClInclude Include="PhysicsBehavior.hpp" />
     <ClInclude Include="collision\volumes\Shape.hpp" />
     <ClInclude Include="programs\HelloTriangleProgram.hpp" />
     <ClInclude Include="programs\Program.hpp" />
-    <ClInclude Include="SimplePhysicsBehavior.hpp" />
+    <ClInclude Include="OctreeMovement.hpp" />
     <ClInclude Include="collision\volumes\Sphere.hpp" />
     <ClInclude Include="core\Transform.hpp" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="collision\spatial\Octree.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\singleColor.frag" />
+    <None Include="shaders\singleColor.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

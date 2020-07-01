@@ -1,9 +1,15 @@
 ﻿#include "Entity.hpp"
 
 #include <core/Behavior.hpp>
+#include <core/Transform.hpp>
 
 namespace slaggy
 {
+	Transform* Entity::transform() const
+	{
+		return getBehavior<Transform>();
+	}
+
 	void Entity::copy(const Entity& other)
 	{
 		for (auto&& pair : other._behaviors)

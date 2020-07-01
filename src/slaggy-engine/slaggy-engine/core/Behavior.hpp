@@ -2,7 +2,7 @@
 #ifndef SE_BEHAVIOUR_HPP
 #define SE_BEHAVIOUR_HPP
 
-#include <core/BaseComponent.hpp>
+#include <core/Component.hpp>
 #include <core/ICloneable.hpp>
 
 namespace slaggy
@@ -11,7 +11,7 @@ namespace slaggy
 	/// Behaviors are meant to be extended and used as components for an Entity give them behavior
 	/// or rather the ability to do something. They are allowed to hold data in addition to behavior.
 	/// </summary>
-	class Behavior : public BaseComponent, public ICloneableTemplate<Behavior>
+	class Behavior : public Component, public ICloneableTemplate<Behavior>
 	{
 	public:
 		Behavior() = default;
