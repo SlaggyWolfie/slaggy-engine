@@ -11,6 +11,6 @@ namespace slaggy
 	
 	Transform* Component::transform() const
 	{
-		return _entity->getBehavior<Transform>();
+		return _entity->getComponent<Transform>();
 	}
 }

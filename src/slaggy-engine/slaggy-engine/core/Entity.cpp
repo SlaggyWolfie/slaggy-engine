@@ -1,25 +1,25 @@
 ﻿#include "Entity.hpp"
 
-#include <core/Behavior.hpp>
+#include <core/Component.hpp>
 #include <core/Transform.hpp>
 
 namespace slaggy
 {
 	Transform* Entity::transform() const
 	{
-		return getBehavior<Transform>();
+		return getComponent<Transform>();
 	}
 
 	void Entity::copy(const Entity& other)
 	{
-		for (auto&& pair : other._behaviors)
-			addBehavior((*pair.second).clone());
+		for (auto&& pair : other._components)
+			addComponent((*pair.second).clone());
 	}
 
-	void Entity::addBehavior(Behavior* behavior)
+	void Entity::addComponent(Component* component)
 	{
-		behavior->_entity = this;
-		_behaviors.try_emplace(typeid(behavior), behavior);
+		component->_entity = this;
+		_components.try_emplace(typeid(component), component);
 	}
 	
 	Entity::Entity(const Entity& other)
@@ -36,7 +36,7 @@ namespace slaggy
 	//{
 	//	if (this == &other) return *this;
 	//	
-	//	_behaviors.clear();
+	//	_Components.clear();
 	//	copy(other);
 
 	//	return *this;
@@ -44,7 +44,7 @@ namespace slaggy
 
 	//Entity& Entity::operator=(Entity&& other) noexcept
 	//{
-	//	_behaviors.clear();
+	//	_Components.clear();
 	//	copy(other);
 
 	//	return *this;

@@ -22,7 +22,7 @@ namespace slaggy
 		_velocity += _acceleration;
 
 		// TODO
-		entity().getBehavior<Transform>()->translate(_velocity);
+		entity().getComponent<Transform>()->translate(_velocity);
 	}
 
 	void PhysicsBehavior::setConstantForce(const glm::vec3 force)

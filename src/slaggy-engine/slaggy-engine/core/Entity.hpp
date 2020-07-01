@@ -6,13 +6,12 @@
 #include <typeinfo>
 #include <typeindex>
 
-#include <core/Behavior.hpp>
+#include <core/Component.hpp>
+//#include <core/Component.hpp>
 #include <core/Transform.hpp>
 
 namespace slaggy
 {
-	//class Behavior;
-
 	class Entity final
 	{
 	public:
@@ -28,121 +27,121 @@ namespace slaggy
 		Entity& operator=(const Entity& other) = delete;
 		Entity& operator=(Entity&& other) noexcept = delete;
 
-		template <class TBehavior>
-		TBehavior* addBehavior();
+		template <class TComponent>
+		TComponent* addComponent();
 
-		template <class TBehavior>
-		bool addBehavior(TBehavior*& behavior);
+		template <class TComponent>
+		bool addComponent(TComponent*& component);
 
-		template <class TBehavior>
-		bool removeBehavior();
+		template <class TComponent>
+		bool removeComponent();
 
-		template <class TBehavior>
-		TBehavior* getBehavior() const;
+		template <class TComponent>
+		TComponent* getComponent() const;
 
-		template <class TBehavior>
-		bool hasBehavior() const;
+		template <class TComponent>
+		bool hasComponent() const;
 
-		template <class TBehavior>
-		bool getBehavior(TBehavior*& behavior) const;
+		template <class TComponent>
+		bool getComponent(TComponent*& component) const;
 
 		Transform* transform() const;
 
 	private:
-		std::unordered_map<std::type_index, std::unique_ptr<Behavior>> _behaviors;
+		std::unordered_map<std::type_index, std::unique_ptr<Component>> _components;
 
 		void copy(const Entity& other);
 
-		void addBehavior(Behavior* behavior);
+		void addComponent(Component* component);
 
-		template <class TBehavior>
-		static bool isBehavior();
+		template <class TComponent>
+		static bool isComponent();
 	};
 
-	template <class TBehavior>
-	TBehavior* Entity::addBehavior()
+	template <class TComponent>
+	TComponent* Entity::addComponent()
 	{
-		if (!isBehavior<TBehavior>() ||
-			_behaviors.count(typeid(TBehavior)) != 0)
+		if (!isComponent<TComponent>() ||
+			_components.count(typeid(TComponent)) != 0)
 			return nullptr;
 
-		TBehavior* behavior = new TBehavior;
-		static_cast<Behavior*>(behavior)->_entity = this;
+		TComponent* component = new TComponent;
+		static_cast<Component*>(component)->_entity = this;
 		
-		_behaviors.try_emplace(typeid(TBehavior), behavior);
-		return behavior;
+		_components.try_emplace(typeid(TComponent), component);
+		return component;
 	}
 
-	template <class TBehavior>
-	bool Entity::addBehavior(TBehavior*& behavior)
+	template <class TComponent>
+	bool Entity::addComponent(TComponent*& component)
 	{
-		behavior = nullptr;
-		if (!isBehavior<TBehavior>() ||
-			_behaviors.count(typeid(TBehavior)) != 0)
+		component = nullptr;
+		if (!isComponent<TComponent>() ||
+			_components.count(typeid(TComponent)) != 0)
 			return false;
 
-		behavior = new TBehavior;
-		static_cast<Behavior*>(behavior)->_entity = this;
+		component = new TComponent;
+		static_cast<Component*>(component)->_entity = this;
 		
-		return _behaviors.try_emplace(typeid(TBehavior), behavior).second;
+		return _components.try_emplace(typeid(TComponent), component).second;
 	}
 
-	template <class TBehavior>
-	bool Entity::removeBehavior()
+	template <class TComponent>
+	bool Entity::removeComponent()
 	{
-		if (!isBehavior<TBehavior>()) return false;
+		if (!isComponent<TComponent>()) return false;
 
-		const auto iter = _behaviors.find(typeid(TBehavior));
-		if (iter == _behaviors.end()) return false;
+		const auto iter = _components.find(typeid(TComponent));
+		if (iter == _components.end()) return false;
 
-		_behaviors.erase(iter->first);
+		_components.erase(iter->first);
 		
 		return true;
 	}
 
-	template <class TBehavior>
-	TBehavior* Entity::getBehavior() const
+	template <class TComponent>
+	TComponent* Entity::getComponent() const
 	{
-		if (!isBehavior<TBehavior>()) return nullptr;
+		if (!isComponent<TComponent>()) return nullptr;
 
-		const auto iter = _behaviors.find(typeid(TBehavior));
-		if (iter == _behaviors.end()) return nullptr;
+		const auto iter = _components.find(typeid(TComponent));
+		if (iter == _components.end()) return nullptr;
 
-		return dynamic_cast<TBehavior*>(iter->second.get());
+		return dynamic_cast<TComponent*>(iter->second.get());
 	}
 
 	template<>
-	inline Transform* Entity::getBehavior() const
+	inline Transform* Entity::getComponent() const
 	{
-		const auto iter = _behaviors.find(typeid(Transform));
-		if (iter == _behaviors.end()) return nullptr;
+		const auto iter = _components.find(typeid(Transform));
+		if (iter == _components.end()) return nullptr;
 
 		return dynamic_cast<Transform*>(iter->second.get());
 	}
 
-	template <class TBehavior>
-	bool Entity::getBehavior(TBehavior*& behavior) const
+	template <class TComponent>
+	bool Entity::getComponent(TComponent*& component) const
 	{
-		behavior = nullptr;
-		if (!isBehavior<TBehavior>()) return false;
+		component = nullptr;
+		if (!isComponent<TComponent>()) return false;
 
-		const auto iter = _behaviors.find(typeid(TBehavior));
-		if (iter == _behaviors.end()) return false;
+		const auto iter = _components.find(typeid(TComponent));
+		if (iter == _components.end()) return false;
 		
-		behavior = dynamic_cast<TBehavior*>(iter->second.get());
+		component = dynamic_cast<TComponent*>(iter->second.get());
 		return true;
 	}
 
-	template <class TBehavior>
-	bool Entity::hasBehavior() const
+	template <class TComponent>
+	bool Entity::hasComponent() const
 	{
-		return getBehavior<TBehavior>() != nullptr;
+		return getComponent<TComponent>() != nullptr;
 	}
 
-	template <class TBehavior>
-	bool Entity::isBehavior()
+	template <class TComponent>
+	bool Entity::isComponent()
 	{
-		return std::is_base_of<Behavior, TBehavior>::value;
+		return std::is_base_of<Component, TComponent>::value;
 	}
 }
 #endif

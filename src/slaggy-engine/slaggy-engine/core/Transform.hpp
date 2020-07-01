@@ -7,7 +7,7 @@
 
 namespace slaggy
 {
-	class Transform : public Behavior, ICloneableTemplate<Transform>
+	class Transform : public Component, public ICloneableTemplate<Transform>
 	{
 	public:
 		void setPosition(const glm::vec3& position);
