@@ -19,7 +19,7 @@ namespace slaggy
 		void fixedUpdate() override;
 		
 	private:
-		AABB* _bounds;
+		AABB* _bounds = nullptr;
 	};
 }
 #endif

@@ -14,6 +14,7 @@ namespace slaggy
 	{
 		auto pb = new OctreeMovement;
 		pb->velocity = velocity;
+		pb->_bounds = _bounds;
 		return pb;
 	}
 
@@ -21,6 +22,9 @@ namespace slaggy
 	{
 		entity().transform()->translate(velocity);
 
-		//if ()
+		// If the object gets out of bounds, reverse its velocity 
+		for (unsigned i = 0; i < 3; ++i)
+			if (velocity[i] != glm::clamp(velocity[i], _bounds->min()[i], _bounds->max()[i]))
+				velocity[i] = -velocity[i];
 	}
 }
