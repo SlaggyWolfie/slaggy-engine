@@ -146,6 +146,7 @@
     <ClCompile Include="engine\Model.cpp" />
     <ClCompile Include="engine\Shader.cpp" />
     <ClCompile Include="programs\OctreeProgram.cpp" />
+    <ClCompile Include="utils\Random.cpp" />
     <ClCompile Include="utils\BoxDebug.cpp" />
     <ClCompile Include="collision\spatial\StaticOctree.cpp" />
     <ClCompile Include="collision\volumes\AABB.cpp" />
@@ -174,6 +175,7 @@
     <ClInclude Include="engine\Model.hpp" />
     <ClInclude Include="engine\Shader.hpp" />
     <ClInclude Include="programs\OctreeProgram.hpp" />
+    <ClInclude Include="utils\Random.hpp" />
     <ClInclude Include="utils\BoxDebug.hpp" />
     <ClInclude Include="collision\spatial\StaticOctree.hpp" />
     <ClInclude Include="collision\volumes\AABB.hpp" />
