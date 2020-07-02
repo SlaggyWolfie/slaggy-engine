@@ -138,7 +138,7 @@ namespace slaggy
 			while (lag >= fixedTimerPerFrame)
 			{
 				if (fixedFrames < 10)
-					createObject(objects, shapeColliders, movers, octree, glm::vec3(0), 1, 0.1f, 0.1f);
+					createObject(objects, shapeColliders, movers, octree, glm::vec3(0), 1, 0.1f, 0.2f);
 
 				for (auto mover : movers) mover->fixedUpdate();
 

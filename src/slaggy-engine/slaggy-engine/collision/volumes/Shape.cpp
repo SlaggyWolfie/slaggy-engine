@@ -18,6 +18,6 @@ namespace slaggy
 
 	glm::mat4 Shape::scaledTransformationMatrix() const
 	{
-		return glm::scale(transformationMatrix(), glm::vec3(radius()));
+		return glm::scale(transformationMatrix(), glm::vec3(radius() * 2));
 	}
 }

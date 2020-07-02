@@ -18,6 +18,7 @@ namespace slaggy
 	SphereDebug::SphereDebug()
 	{
 		//sphere.setRadius(10);
+		sphere = Icosphere(0.5f, 0, false);		
 		
 		glGenVertexArrays(1, &_vao);
 		glGenBuffers(1, &_vbo);
@@ -76,7 +77,8 @@ namespace slaggy
 		_shader->set("mvp", proj * view * model);
 
 		glBindVertexArray(_vao);		
-		glDrawElements(GL_TRIANGLES, sphere.getIndexCount(), GL_UNSIGNED_INT, (void*)0);
+		//glDrawElements(GL_TRIANGLES, sphere.getIndexCount(), GL_UNSIGNED_INT, (void*)0);
+		glDrawElements(GL_LINE_STRIP, sphere.getIndexCount(), GL_UNSIGNED_INT, (void*)0);
 		
 		//sphere.draw();
 	}
