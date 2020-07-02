@@ -138,7 +138,7 @@ namespace slaggy
 			// do
 
 			if (i < 100)
-				createObject(objects, shapeColliders, movers, octree, glm::vec3(0), 1, 0.5f, 0.1f);
+				createObject(objects, shapeColliders, movers, octree, glm::vec3(0), 1, 0.1f, 0.1f);
 
 			for (auto mover : movers) mover->fixedUpdate();
 

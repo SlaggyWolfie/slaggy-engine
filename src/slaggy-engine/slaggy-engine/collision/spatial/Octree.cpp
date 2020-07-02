@@ -19,21 +19,21 @@ namespace slaggy
 	void Octree::build(const glm::vec3 center, const glm::vec3 halfSize, const unsigned currentDepth, const unsigned maxDepth, const std::vector<Shape*>& objects)
 	{
 		_currentDepth = currentDepth;
-		
+
 		_transform = std::make_unique<Transform>();
 		transform()->setPosition(center);
-		
+
 		setHalfSize(halfSize);
 
 		if (objects.empty()) return;
-		
+
 		std::vector<Shape*> intersecting;
 		auto pred = [&](Shape* shape) { return shape->intersects(*this); };
 
 		std::copy_if(objects.begin(), objects.end(), std::back_inserter(intersecting), pred);
 
 		if (intersecting.empty()) return;
-		
+
 		//if (intersecting.size() == 1)
 		//{
 		//	_objects.insert(*intersecting.begin());
@@ -98,12 +98,12 @@ namespace slaggy
 		//const glm::vec3 color =
 		//	glm::vec3(1 - 0.1f * float(_currentDepth))
 		//	* glm::vec3(_currentDepth & 1, (_currentDepth & 2) / 2, (_currentDepth & 4) / 4);
-		
+
 		glm::vec3 color = glm::vec3(1);
 		if (_objects.size() == 1) color = glm::vec3(0, 1, 0);
 		else if (_objects.size() > 1) color = glm::vec3(1, 0, 0);
-		
-		render(color, view, proj);
+
+		if (!_objects.empty()) render(color, view, proj);
 
 		for (auto&& child : _nodes)
 			if (child) child->renderWithChildren(view, proj);
