@@ -14,12 +14,15 @@ namespace slaggy
 	public:
 		glm::vec3 velocity = glm::vec3(0);
 
-		void setBounds(AABB* bounds);
+		void setBounds(const Shape& shape, const AABB& outerBounds);
 		OctreeMovement* clone() override;
 		void fixedUpdate() override;
 		
 	private:
-		AABB* _bounds = nullptr;
+		glm::vec3 _outerBoundsMin = glm::vec3(0);
+		glm::vec3 _outerBoundsMax = glm::vec3(0);
+
+		float _innerRadius = 0;
 	};
 }
 #endif

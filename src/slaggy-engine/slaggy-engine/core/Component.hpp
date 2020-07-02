@@ -14,7 +14,7 @@ namespace slaggy
 
 	public:
 		Entity& entity() const;
-		Transform* transform() const;
+		virtual Transform* transform() const;
 
 	private:
 		Entity* _entity = nullptr;;

@@ -29,7 +29,8 @@ namespace slaggy
 		static float distanceSqr(glm::vec3 lhs, glm::vec3 rhs);
 		static float magnitudeSqr(glm::vec3 v);
 
-		static void reflectVelocity(glm::vec3& lhs, glm::vec3& rhs);
+		//static void reflectVelocity(glm::vec3& lhs, glm::vec3& rhs);
+		static void reflectVelocity(const glm::vec3& centerLhs, const glm::vec3& centerRhs, glm::vec3& velocityLhs, glm::vec3& velocityRhs);
 	};
 }
 

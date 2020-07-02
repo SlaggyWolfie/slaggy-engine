@@ -8,7 +8,8 @@ namespace slaggy
 {
 	glm::mat4 Box::scaledTransformationMatrix() const
 	{
-		return glm::scale(transformationMatrix(), halfSize());
+		//return glm::scale(transformationMatrix(), halfSize());
+		return glm::scale(transformationMatrix(), size());
 	}
 	
 	void Box::setHalfSize(const glm::vec3 halfSize) { _halfSize = halfSize; }

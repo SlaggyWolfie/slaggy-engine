@@ -17,6 +17,9 @@ namespace slaggy
 		
 		bool isInside(glm::vec3 point) const override;
 		glm::vec3 closestPointTo(glm::vec3 point) const override;
+		
+	protected:
+		Transform* transform() const override;
 	};
 }
 #endif //AABB_HPP

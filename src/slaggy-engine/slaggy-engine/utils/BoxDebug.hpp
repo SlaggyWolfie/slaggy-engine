@@ -23,7 +23,7 @@ namespace slaggy
 		
 		unsigned vao() const;
 		void render(const glm::vec3& color, const glm::mat4& model, const glm::mat4& view, const glm::mat4& proj) const;
-		void render(glm::vec3 color, const Box& box, const glm::mat4& view, const glm::mat4& proj) const;
+		void render(const glm::vec3& color, const Box& box, const glm::mat4& view, const glm::mat4& proj) const;
 		
 	private:
 		static std::unique_ptr<BoxDebug> _instance;		

@@ -34,7 +34,7 @@ namespace slaggy
 		virtual void render(const glm::vec3& color, const glm::mat4& view, const glm::mat4& proj) const { }
 		
 	protected:
-		virtual Transform& transform() const = 0;
+		virtual Transform* transform() const = 0;
 	};
 }
 #endif

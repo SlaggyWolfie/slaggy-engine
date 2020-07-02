@@ -38,4 +38,9 @@ namespace slaggy
 	{
 		return glm::clamp(point, min(), max());
 	}
+
+	Transform* AABB::transform() const
+	{
+		return nullptr;
+	}
 }

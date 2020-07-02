@@ -23,7 +23,7 @@ namespace slaggy
 	class Octree final : public AABB
 	{
 	public:
-		Transform& transform() const override;
+		Transform* transform() const override;
 
 		void build(glm::vec3 center, glm::vec3 halfSize, unsigned currentDepth, unsigned maxDepth, const std::vector<Shape*>& objects);
 		void reset();

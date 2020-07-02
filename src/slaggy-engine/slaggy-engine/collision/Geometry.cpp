@@ -97,11 +97,11 @@ namespace slaggy
 
 		return satTest(lhs, rhs);
 	}
-	
+
 	bool Geometry::satTest(const Box& lhs, const Box& rhs)
 	{
 		// Separating Axis Theorem
-		
+
 		const glm::vec3 lhsCenter = lhs.center(); // object's pos = collider center
 		const glm::vec3 rhsCenter = rhs.center();
 		const glm::mat4 lhsTransform = glm::scale(lhs.transformationMatrix(), lhs.halfSize()); // scaling for halfsize
@@ -189,10 +189,27 @@ namespace slaggy
 		return v.x * v.x + v.y * v.y + v.z * v.z;
 	}
 
-	void Geometry::reflectVelocity(glm::vec3& lhs, glm::vec3& rhs)
+	void Geometry::reflectVelocity(const glm::vec3& centerLhs, const glm::vec3& centerRhs, glm::vec3& velocityLhs, glm::vec3& velocityRhs)
 	{
-		const glm::vec3 total = lhs - rhs;
-		lhs = lhs - total;
-		rhs = lhs + total;
+		const glm::vec3 total = velocityLhs - velocityRhs;
+		velocityLhs = velocityLhs - total;
+		velocityRhs = velocityLhs + total;
+		return;
+
+		// https://en.wikipedia.org/wiki/Elastic_collision#Two-dimensional_collision_with_two_moving_objects
+		// assuming masses are equal
+
+		const glm::vec3 centerDistanceLR = centerLhs - centerRhs;
+		const glm::vec3 centerDistanceRL = -centerDistanceLR;
+
+		velocityLhs = velocityLhs - glm::dot(velocityLhs - velocityRhs, centerDistanceLR) / magnitudeSqr(centerDistanceLR) * centerDistanceLR;
+		velocityRhs = velocityRhs - glm::dot(velocityRhs - velocityLhs, centerDistanceRL) / magnitudeSqr(centerDistanceRL) * centerDistanceRL;
 	}
+
+	//void Geometry::reflectVelocity(glm::vec3& lhs, glm::vec3& rhs)
+	//{
+	//	const glm::vec3 total = lhs - rhs;
+	//	lhs = lhs - total;
+	//	rhs = lhs + total;
+	//}
 }

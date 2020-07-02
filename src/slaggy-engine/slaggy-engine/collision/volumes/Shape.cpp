@@ -8,12 +8,12 @@ namespace slaggy
 {
 	glm::vec3 Shape::center() const
 	{
-		return transform().position();
+		return transform()->position();
 	}
 
 	glm::mat4 Shape::transformationMatrix() const
 	{
-		return transform().transformationMatrix();
+		return transform()->transformationMatrix();
 	}
 
 	glm::mat4 Shape::scaledTransformationMatrix() const

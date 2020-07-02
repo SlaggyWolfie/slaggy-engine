@@ -16,9 +16,11 @@
 
 namespace slaggy
 {
+	class AABB;
 	class Camera;
 	class Entity;
 	class Shape;
+	class OctreeMovement;
 
 	class OctreeProgram : public Program
 	{
@@ -68,7 +70,9 @@ namespace slaggy
 		void createObject(
 			std::vector<std::unique_ptr<Entity>>& objectContainer,
 			std::vector<Shape*>& colliderContainer,
-			const glm::vec3& spherePosition, float sphereRadius, float speed) const;
+			std::vector<OctreeMovement*>& movers,
+			const AABB& bounds,
+			const glm::vec3& spherePosition, float sphereRadius, float speed, float objectHalfSize) const;
 	};
 }
-#endif EMPTY_PROGRAM_HPP
+#endif

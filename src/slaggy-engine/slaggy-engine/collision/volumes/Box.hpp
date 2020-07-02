@@ -6,9 +6,6 @@
 
 namespace slaggy
 {
-	class Collider;
-	class World;
-
 	class Box : public Shape
 	{		
 	public:

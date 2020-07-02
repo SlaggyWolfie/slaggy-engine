@@ -1,6 +1,7 @@
 #include "Sphere.hpp"
 
 #include <collision/Geometry.hpp>
+#include <utils/SphereDebug.hpp>
 
 namespace slaggy
 {
@@ -45,5 +46,14 @@ namespace slaggy
 		return position + glm::normalize(point - position) * radius();
 	}
 
-	void Sphere::render(const glm::mat4& view, const glm::mat4& proj) const {	}
+	void Sphere::render(const glm::mat4& view, const glm::mat4& proj) const
+	{
+		SphereDebug::instance().render(glm::vec3(0, 1, 1), *this, view, proj);
+	}
+
+	void Sphere::render(const glm::vec3& color, const glm::mat4& view, const glm::mat4& proj) const
+	{
+		SphereDebug::instance().render(color, *this, view, proj);
+	}
+	
 }

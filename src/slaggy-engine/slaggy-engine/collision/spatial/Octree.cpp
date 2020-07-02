@@ -9,32 +9,36 @@ namespace slaggy
 		// example: i = 3 (0b011) -> cell = {1, 1, 0}
 
 		//const glm::vec3 cell(index & 1, index & 2, index & 4);
-		//return (cell * 2.0f - glm::vec3(1)) * glm::vec3(0.5f);
 
 		const glm::vec3 cell(index & 1, (index & 2) / 2, (index & 4) / 4);
+		return cell * 2.0f - glm::vec3(1);
+		return (cell * 2.0f - glm::vec3(1)) * glm::vec3(0.5f);
 		return cell - glm::vec3(0.5f);
 	};
 
 	void Octree::build(const glm::vec3 center, const glm::vec3 halfSize, const unsigned currentDepth, const unsigned maxDepth, const std::vector<Shape*>& objects)
 	{
 		_currentDepth = currentDepth;
+		
 		_transform = std::make_unique<Transform>();
-		transform().setPosition(center);
+		transform()->setPosition(center);
+		
 		setHalfSize(halfSize);
 
 		if (objects.empty()) return;
+		
 		std::vector<Shape*> intersecting;
 		auto pred = [&](Shape* shape) { return shape->intersects(*this); };
 
-		std::copy_if(objects.begin(), objects.end(), intersecting.begin(), pred);
+		std::copy_if(objects.begin(), objects.end(), std::back_inserter(intersecting), pred);
 
 		if (intersecting.empty()) return;
 		
-		if (intersecting.size() == 1)
-		{
-			_objects.insert(*objects.begin());
-			return;
-		}
+		//if (intersecting.size() == 1)
+		//{
+		//	_objects.insert(*intersecting.begin());
+		//	return;
+		//}
 
 		if (currentDepth == maxDepth)
 		{
@@ -95,7 +99,9 @@ namespace slaggy
 		//	glm::vec3(1 - 0.1f * float(_currentDepth))
 		//	* glm::vec3(_currentDepth & 1, (_currentDepth & 2) / 2, (_currentDepth & 4) / 4);
 		
-		const glm::vec3 color = glm::vec3(1);
+		glm::vec3 color = glm::vec3(1);
+		if (_objects.size() == 1) color = glm::vec3(0, 1, 0);
+		else if (_objects.size() > 1) color = glm::vec3(1, 0, 0);
 		
 		render(color, view, proj);
 
@@ -103,8 +109,8 @@ namespace slaggy
 			if (child) child->renderWithChildren(view, proj);
 	}
 
-	Transform& Octree::transform() const
+	Transform* Octree::transform() const
 	{
-		return *_transform;
+		return _transform.get();
 	}
 }

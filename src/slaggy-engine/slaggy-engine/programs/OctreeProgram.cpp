@@ -9,10 +9,12 @@
 #include <core/Entity.hpp>
 #include <engine/Shader.hpp>
 #include <engine/Camera.hpp>
+#include <utils/Random.hpp>
 
+#include <OctreeMovement.hpp>
 #include <collision/spatial/Octree.hpp>
-#include "utils/Random.hpp"
-#include "OctreeMovement.hpp"
+#include <collision/colliders/SphereCollider.hpp>
+#include <collision/CollisionManager.hpp>
 
 namespace slaggy
 {
@@ -101,12 +103,20 @@ namespace slaggy
 		Octree octree;
 		octree.build(glm::vec3(0), glm::vec3(5), 0, 3, { });
 
-		//Octree o;
-		//o.build(glm::vec3(0), glm::vec3(0.1f), 0, 0, { });
+		//Entity min;
+		//min.addComponent<Transform>()->setPosition(glm::vec3(-5));
+		//const auto scmin = min.addComponent<SphereCollider>();
+		//scmin->setRadius(1);
+		//
+		//Entity max;
+		//max.addComponent<Transform>()->setPosition(glm::vec3(5));
+		//const auto scmax = max.addComponent<SphereCollider>();
+		//scmax->setRadius(1);
 
 		unsigned objectAmount = 0;
 		std::vector<std::unique_ptr<Entity>> objects;
 		std::vector<Shape*> shapeColliders;
+		std::vector<OctreeMovement*> movers;
 
 		//const unsigned frames = 2400;
 		const unsigned frames = 12400;
@@ -127,10 +137,13 @@ namespace slaggy
 
 			// do
 
-			if (i < 1000)
-				createObject(objects, shapeColliders, glm::vec3(0), 5, 10);
+			if (i < 100)
+				createObject(objects, shapeColliders, movers, octree, glm::vec3(0), 1, 0.5f, 0.1f);
+
+			for (auto mover : movers) mover->fixedUpdate();
 
 			octree.build(glm::vec3(0), glm::vec3(5), 0, 3, shapeColliders);
+			CollisionManager::resolve(octree.collisions());
 
 			// Calc
 			view = camera->viewMatrix();
@@ -145,14 +158,17 @@ namespace slaggy
 			//o.render(glm::vec3(0), view, projection);
 			octree.renderWithChildren(view, projection);
 
+			//scmin->render(view, projection);
+			//scmax->render(view, projection);
+			for (auto shapeCollider : shapeColliders)
+				shapeCollider->render(glm::vec3(0, 0, 1), view, projection);
+
 			// double buffering, and poll IO events
 			glfwSwapBuffers(window);
 			glfwPollEvents();
 		}
 
 		// Clean-up!
-		// something
-
 		delete camera;
 
 		glfwTerminate();
@@ -162,12 +178,15 @@ namespace slaggy
 	void OctreeProgram::createObject(
 		std::vector<std::unique_ptr<Entity>>& objectContainer,
 		std::vector<Shape*>& colliderContainer,
-		const glm::vec3& spherePosition, const float sphereRadius, const float speed) const
+		std::vector<OctreeMovement*>& movers,
+		const AABB& bounds,
+		const glm::vec3& spherePosition, const float sphereRadius,
+		const float speed, const float objectHalfSize) const
 	{
 		glm::vec3 position = glm::vec3(
-			Random::range(-1.0f, 1.0f, 2) * 2,
-			Random::range(-1.0f, 1.0f, 2) * 2,
-			Random::range(-1.0f, 1.0f, 2) * 2);
+			Random::range(-1.0f, 1.0f, 2),
+			Random::range(-1.0f, 1.0f, 2),
+			Random::range(-1.0f, 1.0f, 2));
 
 		position *= sphereRadius;
 		position += spherePosition;
@@ -195,8 +214,14 @@ namespace slaggy
 		const auto angle = static_cast<float>(Random::range(0, 360));
 		transform->rotate(glm::normalize(axis), angle);
 
-		entity->addComponent<OctreeMovement>()->velocity = velocity;
-		//colliderContainer.push_back(entity->addComponent<SphereCollider>());
+		const auto sc = entity->addComponent<SphereCollider>();
+		sc->setRadius(objectHalfSize);
+		colliderContainer.push_back(sc);
+
+		auto om = entity->addComponent<OctreeMovement>();
+		om->velocity = velocity;
+		om->setBounds(*sc, bounds);
+		movers.push_back(om);
 	}
 
 	void OctreeProgram::framebuffer_size_callback(GLFWwindow* window, const int width, const int height) const

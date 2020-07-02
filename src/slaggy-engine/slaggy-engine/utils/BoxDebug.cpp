@@ -82,6 +82,9 @@ namespace slaggy
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
 		glEnableVertexAttribArray(1);
 
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+		glEnableVertexAttribArray(2);
+
 		// clean
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
@@ -111,7 +114,7 @@ namespace slaggy
 		glDrawArrays(GL_LINE_STRIP, 0, 36);
 	}
 
-	void BoxDebug::render(const glm::vec3 color, const Box& box, const glm::mat4& view, const glm::mat4& proj) const
+	void BoxDebug::render(const glm::vec3& color, const Box& box, const glm::mat4& view, const glm::mat4& proj) const
 	{
 		render(color, box.scaledTransformationMatrix(), view, proj);
 	}

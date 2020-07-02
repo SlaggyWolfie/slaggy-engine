@@ -28,6 +28,11 @@ namespace slaggy
 		return result;
 	}
 
+	float Random::range(const int decimalAccuracy)
+	{
+		return range(0, 1, decimalAccuracy);
+	}
+
 	int Random::range(const int min, const int max)
 	{
 		if (!_isSetup) setup();

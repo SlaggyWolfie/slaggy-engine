@@ -6,7 +6,7 @@
 
 namespace slaggy
 {
-	class Sphere final : public Shape
+	class Sphere : public Shape
 	{
 	public:
 		bool intersects(const Shape& shape) const override;
@@ -21,6 +21,7 @@ namespace slaggy
 		glm::vec3 closestPointTo(glm::vec3 point) const override;
 		
 		void render(const glm::mat4& view, const glm::mat4& proj) const override;
+		void render(const glm::vec3& color, const glm::mat4& view, const glm::mat4& proj) const override;
 		
 	private:
 		float _radius = 0;
