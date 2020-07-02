@@ -36,9 +36,8 @@ namespace slaggy
 		const color4 _defaultClearColor{ 0.1f, 0.1f, 0.1f, 1.0f };
 		color4 _clearColor = _defaultClearColor;
 
-		float mix_ratio = 0.2f;
-		float deltaTime = 0;
-		float lastFrame = 0;
+		double deltaTime = 0;
+		double lastFrame = 0;
 		bool firstMouse = true;
 
 		glm::vec2 lastMousePosition = glm::vec2

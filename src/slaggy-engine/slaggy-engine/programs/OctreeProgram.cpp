@@ -90,6 +90,7 @@ namespace slaggy
 
 		//----- end of setup -----//
 #pragma endregion 
+		glfwSwapInterval(0);
 
 		const glm::mat4 identity(1);
 		glm::mat4 view, projection;
@@ -103,54 +104,60 @@ namespace slaggy
 		Octree octree;
 		octree.build(glm::vec3(0), glm::vec3(5), 0, 3, { });
 
-		//Entity min;
-		//min.addComponent<Transform>()->setPosition(glm::vec3(-5));
-		//const auto scmin = min.addComponent<SphereCollider>();
-		//scmin->setRadius(1);
-		//
-		//Entity max;
-		//max.addComponent<Transform>()->setPosition(glm::vec3(5));
-		//const auto scmax = max.addComponent<SphereCollider>();
-		//scmax->setRadius(1);
-
-		unsigned objectAmount = 0;
+		//unsigned objectAmount = 0;
 		std::vector<std::unique_ptr<Entity>> objects;
 		std::vector<Shape*> shapeColliders;
 		std::vector<OctreeMovement*> movers;
 
 		//const unsigned frames = 2400;
-		const unsigned frames = 12400;
+		const unsigned simulationFrames = 12400;
 
 		// Program Loop (Render Loop)
-		//while (!glfwWindowShouldClose(window))
-		for (unsigned i = 0; i < frames && !glfwWindowShouldClose(window); ++i)
-		{
-			//if (i % 60 == 0) std::cout << i / 60 << std::endl;
+		const unsigned fixedTargetFramerate = 50;
+		const float fixedTimerPerFrame = 1.0f / fixedTargetFramerate;
 
+		unsigned fixedFrames = 0, frames = 0, fixedUpdates = 0;
+		double lag = 0;
+
+		lastFrame = glfwGetTime();
+		double timer = lastFrame;
+
+		//while (!glfwWindowShouldClose(window))
+		while (fixedFrames < simulationFrames && !glfwWindowShouldClose(window))
+		{
 			// time
-			const auto currentFrame = float(glfwGetTime());
+			const auto currentFrame = glfwGetTime();
 			deltaTime = currentFrame - lastFrame;
 			lastFrame = currentFrame;
+			lag += deltaTime;
 
 			// input
 			process_input(window);
 
-			// do
+			// fixed update
+			while (lag >= fixedTimerPerFrame)
+			{
+				if (fixedFrames < 10)
+					createObject(objects, shapeColliders, movers, octree, glm::vec3(0), 1, 0.1f, 0.1f);
 
-			if (i < 100)
-				createObject(objects, shapeColliders, movers, octree, glm::vec3(0), 1, 0.1f, 0.1f);
+				for (auto mover : movers) mover->fixedUpdate();
 
-			for (auto mover : movers) mover->fixedUpdate();
+				octree.build(glm::vec3(0), glm::vec3(5), 0, 3, shapeColliders);
+				CollisionManager::resolve(octree.collisions());
 
-			octree.build(glm::vec3(0), glm::vec3(5), 0, 3, shapeColliders);
-			CollisionManager::resolve(octree.collisions());
+				fixedFrames++;
+				fixedUpdates++;
+				lag -= fixedTimerPerFrame;
+			}
 
-			// Calc
+			// potential update here
+			// potential late update here
+
+			// rendering
 			view = camera->viewMatrix();
 			projection = glm::perspective(glm::radians(camera->fov),
 				float(INITIAL_SCREEN_WIDTH) / float(INITIAL_SCREEN_HEIGHT), 0.1f, 100.0f);
 
-			// rendering
 			glClearColor(_clearColor.r, _clearColor.g, _clearColor.b, _clearColor.a);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -158,10 +165,18 @@ namespace slaggy
 			//o.render(glm::vec3(0), view, projection);
 			octree.renderWithChildren(view, projection);
 
-			//scmin->render(view, projection);
-			//scmax->render(view, projection);
 			for (auto shapeCollider : shapeColliders)
 				shapeCollider->render(glm::vec3(0, 0, 1), view, projection);
+
+			frames++;
+
+			// reset every second
+			if (glfwGetTime() - timer > 1)
+			{
+				timer++;
+				std::cout << "FPS: " << frames << " | Fixed Updates: " << fixedUpdates << std::endl;
+				fixedUpdates = 0, frames = 0;
+			}
 
 			// double buffering, and poll IO events
 			glfwSwapBuffers(window);
@@ -240,18 +255,6 @@ namespace slaggy
 		if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
 			_clearColor = { 0.7f, 0, 0, 1 };
 
-		if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-		{
-			mix_ratio += 0.01f;
-			mix_ratio = std::min(mix_ratio, 1.0f);
-		}
-
-		if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-		{
-			mix_ratio -= 0.01f;
-			mix_ratio = std::max(mix_ratio, 0.0f);
-		}
-
 		unsigned int direction = 0;
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) direction |= Camera::movement::FORWARD;
 		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) direction |= Camera::movement::BACKWARD;
@@ -260,7 +263,7 @@ namespace slaggy
 		const bool shiftPressed = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS;
 
 		if (direction)
-			camera->processMovement(Camera::movement(direction), shiftPressed, deltaTime);
+			camera->processMovement(Camera::movement(direction), shiftPressed, static_cast<float>(deltaTime));
 	}
 
 	void OctreeProgram::mouse_callback(GLFWwindow*, const double x, const double y)
