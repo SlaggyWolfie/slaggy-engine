@@ -110,7 +110,7 @@ namespace slaggy
 		std::vector<OctreeMovement*> movers;
 
 		//const unsigned frames = 2400;
-		const unsigned simulationFrames = 12400;
+		const unsigned simulationFrames = 2000;
 
 		// Program Loop (Render Loop)
 		const unsigned fixedTargetFramerate = 50;
@@ -174,7 +174,7 @@ namespace slaggy
 			if (glfwGetTime() - timer > 1)
 			{
 				timer++;
-				std::cout << "FPS: " << frames << " | Fixed Updates: " << fixedUpdates << std::endl;
+				std::cout << "FPS: " << frames << " | Fixed Updates: " << fixedUpdates << " | Second: " << static_cast<int>(timer) << std::endl;
 				fixedUpdates = 0, frames = 0;
 			}
 
