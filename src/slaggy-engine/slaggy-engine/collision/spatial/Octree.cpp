@@ -13,11 +13,11 @@ namespace slaggy
 		return cell * 2.0f - glm::vec3(1);
 	};
 
-	void Octree::split(const unsigned depth, std::vector<Shape*> objects)
+	void Octree::split(const unsigned depth, Shapes objects)
 	{
 		if (objects.empty()) return;
 
-		std::vector<Shape*> intersecting;
+		Shapes intersecting;
 		auto pred = [&](Shape* shape) { return shape->intersects(*this); };
 		std::copy_if(objects.begin(), objects.end(), std::back_inserter(intersecting), pred);
 
@@ -37,25 +37,24 @@ namespace slaggy
 		}
 	}
 
-	void Octree::reset()
+	void Octree::construct(const glm::vec3& center, const glm::vec3& halfSize,
+		const unsigned depth, const unsigned maxDepth, const Shapes& objects)
 	{
-		for (auto&& node : _nodes) node.release();
-		_objects.clear();
+		_currentDepth = depth;
+		initialize(center, halfSize, maxDepth);
+		split(depth, objects);
 	}
 
-	void Octree::construct(const glm::vec3& center, const glm::vec3& halfSize,
-		const unsigned depth, const unsigned maxDepth, const std::vector<Shape*>& objects)
+	void Octree::reset()
 	{
-		initialize(center, halfSize, maxDepth);
-		_currentDepth = depth;
-
-		split(depth, objects);
+		for (auto&& node : _nodes) node = nullptr;
+		_objects.clear();
 	}
 
 	std::vector<CollisionPair> Octree::collisions() const
 	{
 		std::vector<CollisionPair> pairs;
-		if (_nodes[0] == nullptr)
+		if (!_nodes[0])
 		{
 			if (_objects.empty()) return pairs;
 
@@ -93,5 +92,4 @@ namespace slaggy
 		for (auto&& child : _nodes)
 			if (child) child->renderNodes(view, proj);
 	}
-
 }

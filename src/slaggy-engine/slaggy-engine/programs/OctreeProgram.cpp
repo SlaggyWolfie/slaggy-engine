@@ -15,6 +15,7 @@
 #include <collision/spatial/Octree.hpp>
 #include <collision/colliders/SphereCollider.hpp>
 #include <collision/CollisionManager.hpp>
+#include "collision/spatial/KDTree.hpp"
 
 namespace slaggy
 {
@@ -97,12 +98,13 @@ namespace slaggy
 		glm::mat4 model = view = projection = identity;
 
 		//camera = new Camera(glm::vec3(0, 0, 12));
-		camera = new Camera(glm::vec3(0));
-		camera->forward = glm::vec3(1, 0, 0);
-		camera->updateForward();
+		camera = new Camera(glm::vec3(0, 0, 20));
+		//camera->forward = glm::vec3(1, 0, 0);
+		//camera->updateForward();
 
-		Octree octree;
-		octree.initialize(glm::vec3(0), glm::vec3(5), 3);
+		//Octree octree;
+		KDTree tree;
+		tree.initialize(glm::vec3(0), glm::vec3(5), 7);
 
 		//unsigned objectAmount = 0;
 		std::vector<std::unique_ptr<Entity>> objects;
@@ -137,14 +139,13 @@ namespace slaggy
 			// fixed update
 			while (lag >= fixedTimerPerFrame)
 			{
-				if (fixedFrames < 2)
-					createObject(objects, shapeColliders, movers, octree, glm::vec3(0), 1, 0.1f, 0.2f);
+				if (fixedFrames < 100)
+					createObject(objects, shapeColliders, movers, tree, glm::vec3(0), 1, 0.1f, 0.2f);
 
 				for (auto mover : movers) mover->fixedUpdate();
 
-				octree.reset();
-				octree.split(shapeColliders);
-				CollisionManager::resolve(octree.collisions());
+				tree.startSplit(shapeColliders);
+				CollisionManager::resolve(tree.collisions());
 
 				fixedFrames++;
 				fixedUpdates++;
@@ -164,7 +165,7 @@ namespace slaggy
 
 			// draw something
 			//o.render(glm::vec3(0), view, projection);
-			octree.renderNodes(view, projection);
+			tree.renderNodes(view, projection);
 
 			for (auto shapeCollider : shapeColliders)
 				shapeCollider->render(glm::vec3(0, 0, 1), view, projection);

@@ -14,16 +14,11 @@ namespace slaggy
 	class Octree final : public SpatialPartitioningTree
 	{
 	public:
-		using SpatialPartitioningTree::split;
-
-		void reset();
-		void construct(const glm::vec3& center, const glm::vec3& halfSize, unsigned depth, unsigned maxDepth, const std::vector<Shape*>& objects);
+		void reset() override;
 		std::vector<CollisionPair> collisions() const override;
 
 		void render(const glm::vec3& color, const glm::mat4& view, const glm::mat4& proj) const override;
 		void renderNodes(const glm::mat4& view, const glm::mat4& proj) const override;
-
-		void split(unsigned depth, std::vector<Shape*> objects) override;
 		
 	private:
 		unsigned _currentDepth = 0;
@@ -32,6 +27,9 @@ namespace slaggy
 		std::unordered_set<Shape*> _objects{};
 
 		static glm::vec3 cell(unsigned index);
+
+		void construct(const glm::vec3& center, const glm::vec3& halfSize, unsigned depth, unsigned maxDepth, const Shapes& objects);
+		void split(unsigned depth, Shapes objects) override;
 	};
 }
 #endif
