@@ -102,7 +102,7 @@ namespace slaggy
 		camera->updateForward();
 
 		Octree octree;
-		octree.build(glm::vec3(0), glm::vec3(5), 0, 3, { });
+		octree.initialize(glm::vec3(0), glm::vec3(5), 3);
 
 		//unsigned objectAmount = 0;
 		std::vector<std::unique_ptr<Entity>> objects;
@@ -137,12 +137,13 @@ namespace slaggy
 			// fixed update
 			while (lag >= fixedTimerPerFrame)
 			{
-				if (fixedFrames < 10)
+				if (fixedFrames < 2)
 					createObject(objects, shapeColliders, movers, octree, glm::vec3(0), 1, 0.1f, 0.2f);
 
 				for (auto mover : movers) mover->fixedUpdate();
 
-				octree.build(glm::vec3(0), glm::vec3(5), 0, 3, shapeColliders);
+				octree.reset();
+				octree.split(shapeColliders);
 				CollisionManager::resolve(octree.collisions());
 
 				fixedFrames++;
@@ -163,7 +164,7 @@ namespace slaggy
 
 			// draw something
 			//o.render(glm::vec3(0), view, projection);
-			octree.renderWithChildren(view, projection);
+			octree.renderNodes(view, projection);
 
 			for (auto shapeCollider : shapeColliders)
 				shapeCollider->render(glm::vec3(0, 0, 1), view, projection);

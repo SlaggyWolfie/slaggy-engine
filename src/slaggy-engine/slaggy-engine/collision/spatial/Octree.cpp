@@ -1,46 +1,28 @@
 #include "Octree.hpp"
-#include "utils/BoxDebug.hpp"
-#include <glm/ext/matrix_transform.inl>
+
+#include <glm/ext/matrix_transform.hpp>
+
+#include <utils/BoxDebug.hpp>
 
 namespace slaggy
 {
 	glm::vec3 Octree::cell(const unsigned index)
 	{
 		// example: i = 3 (0b011) -> cell = {1, 1, 0}
-
-		//const glm::vec3 cell(index & 1, index & 2, index & 4);
-
-		const glm::vec3 cell(index & 1, (index & 2) / 2, (index & 4) / 4);
+		const glm::vec3 cell(index & 1, (index & 0b010) >> 1, (index & 0b100) >> 2);
 		return cell * 2.0f - glm::vec3(1);
-		return (cell * 2.0f - glm::vec3(1)) * glm::vec3(0.5f);
-		return cell - glm::vec3(0.5f);
 	};
 
-	void Octree::build(const glm::vec3 center, const glm::vec3 halfSize, const unsigned currentDepth, const unsigned maxDepth, const std::vector<Shape*>& objects)
+	void Octree::split(const unsigned depth, std::vector<Shape*> objects)
 	{
-		_currentDepth = currentDepth;
-
-		_transform = std::make_unique<Transform>();
-		transform()->setPosition(center);
-
-		setHalfSize(halfSize);
-
 		if (objects.empty()) return;
 
 		std::vector<Shape*> intersecting;
 		auto pred = [&](Shape* shape) { return shape->intersects(*this); };
-
 		std::copy_if(objects.begin(), objects.end(), std::back_inserter(intersecting), pred);
 
 		if (intersecting.empty()) return;
-
-		//if (intersecting.size() == 1)
-		//{
-		//	_objects.insert(*intersecting.begin());
-		//	return;
-		//}
-
-		if (currentDepth == maxDepth)
+		if (depth == _maxDepth || intersecting.size() == 1)
 		{
 			_objects.insert(intersecting.begin(), intersecting.end());
 			return;
@@ -51,7 +33,7 @@ namespace slaggy
 			_nodes[i] = std::make_unique<Octree>();
 			const glm::vec3 childHalfSize = Octree::halfSize() / 2.0f;
 			const glm::vec3 cellLocation = cell(i);
-			_nodes[i]->build(center + cellLocation * childHalfSize, childHalfSize, currentDepth + 1, maxDepth, intersecting);
+			_nodes[i]->construct(center() + cellLocation * childHalfSize, childHalfSize, depth + 1, _maxDepth, intersecting);
 		}
 	}
 
@@ -61,12 +43,19 @@ namespace slaggy
 		_objects.clear();
 	}
 
-	std::vector<CollisionPair> Octree::collisions()
+	void Octree::construct(const glm::vec3& center, const glm::vec3& halfSize,
+		const unsigned depth, const unsigned maxDepth, const std::vector<Shape*>& objects)
 	{
-		const bool isLeaf = _nodes[0] == nullptr;
+		initialize(center, halfSize, maxDepth);
+		_currentDepth = depth;
 
+		split(depth, objects);
+	}
+
+	std::vector<CollisionPair> Octree::collisions() const
+	{
 		std::vector<CollisionPair> pairs;
-		if (isLeaf)
+		if (_nodes[0] == nullptr)
 		{
 			if (_objects.empty()) return pairs;
 
@@ -93,12 +82,8 @@ namespace slaggy
 		BoxDebug::instance().render(color, model, view, proj);
 	}
 
-	void Octree::renderWithChildren(const glm::mat4& view, const glm::mat4& proj) const
+	void Octree::renderNodes(const glm::mat4& view, const glm::mat4& proj) const
 	{
-		//const glm::vec3 color =
-		//	glm::vec3(1 - 0.1f * float(_currentDepth))
-		//	* glm::vec3(_currentDepth & 1, (_currentDepth & 2) / 2, (_currentDepth & 4) / 4);
-
 		glm::vec3 color = glm::vec3(1);
 		if (_objects.size() == 1) color = glm::vec3(0, 1, 0);
 		else if (_objects.size() > 1) color = glm::vec3(1, 0, 0);
@@ -106,11 +91,7 @@ namespace slaggy
 		if (!_objects.empty()) render(color, view, proj);
 
 		for (auto&& child : _nodes)
-			if (child) child->renderWithChildren(view, proj);
+			if (child) child->renderNodes(view, proj);
 	}
 
-	Transform* Octree::transform() const
-	{
-		return _transform.get();
-	}
 }

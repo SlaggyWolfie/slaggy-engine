@@ -2,51 +2,34 @@
 #ifndef OCTREE_HPP
 #define OCTREE_HPP
 
+#include <collision/spatial/SpatialPartitioningTree.hpp>
+
 #include <array>
 #include <vector>
 #include <memory>
 #include <unordered_set>
 
-#include <core/Transform.hpp>
-#include <collision/volumes/AABB.hpp>
-
 namespace slaggy
 {
-	struct CollisionPair
-	{
-		Shape* lhs = nullptr;
-		Shape* rhs = nullptr;
-
-		CollisionPair(Shape* lhs, Shape* rhs) : lhs(lhs), rhs(rhs) { }
-	};
-
-	class Octree final : public AABB
+	class Octree final : public SpatialPartitioningTree
 	{
 	public:
-		Transform* transform() const override;
+		using SpatialPartitioningTree::split;
 
-		void build(glm::vec3 center, glm::vec3 halfSize, unsigned currentDepth, unsigned maxDepth, const std::vector<Shape*>& objects);
 		void reset();
-		std::vector<CollisionPair> collisions();
+		void construct(const glm::vec3& center, const glm::vec3& halfSize, unsigned depth, unsigned maxDepth, const std::vector<Shape*>& objects);
+		std::vector<CollisionPair> collisions() const override;
 
 		void render(const glm::vec3& color, const glm::mat4& view, const glm::mat4& proj) const override;
-		void renderWithChildren(const glm::mat4& view, const glm::mat4& proj) const;
-		
-		//std::array<Octree*, 8> nodes()
-		//{
-		//	std::array<Octree*, 8> o { };
-		//	for (int i = 0; i < 8; i++)
-		//		o[i] = _nodes[i].get();
-		//	
-		//	return o;
-		//}
+		void renderNodes(const glm::mat4& view, const glm::mat4& proj) const override;
+
+		void split(unsigned depth, std::vector<Shape*> objects) override;
 		
 	private:
 		unsigned _currentDepth = 0;
-		
-		std::unique_ptr<Transform> _transform{ };
-		std::array<std::unique_ptr<Octree>, 8> _nodes{ };
-		std::unordered_set<Shape*> _objects{ };
+
+		std::array<std::unique_ptr<Octree>, 8> _nodes{};
+		std::unordered_set<Shape*> _objects{};
 
 		static glm::vec3 cell(unsigned index);
 	};
