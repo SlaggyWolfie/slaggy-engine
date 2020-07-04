@@ -1,4 +1,4 @@
-#include "LoggingProgram.hpp"
+#include "LoggingNoRenderingProgram.hpp"
 
 #include <iostream>
 
@@ -8,7 +8,6 @@
 
 #include <core/Entity.hpp>
 #include <engine/Shader.hpp>
-#include <engine/Camera.hpp>
 #include <utils/Random.hpp>
 
 #include <OctreeMovement.hpp>
@@ -22,80 +21,8 @@
 
 namespace slaggy
 {
-	int LoggingProgram::run()
+	int LoggingNoRenderingProgram::run()
 	{
-#pragma region init
-		// Initialize GLFW context with OpenGL version 3.3 using the Core OpenGL profile
-		glfwInit();
-
-		//-----Setup-----//
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-		// MacOS-specific code
-#ifdef __APPLE__
-		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-#endif
-
-		// Create window
-		GLFWwindow* window = glfwCreateWindow(INITIAL_SCREEN_WIDTH, INITIAL_SCREEN_HEIGHT, "My OpenGL Window!", nullptr, nullptr);
-		if (window == nullptr)
-		{
-			std::cout << "Failed to create GLFW window." << std::endl;
-			glfwTerminate();
-			return INIT_ERROR;
-		}
-
-		// Set viewport size within window and assign resize function
-		//glViewport(0, 0, INITIAL_SCREEN_WIDTH, INITIAL_SCREEN_HEIGHT);
-		glfwMakeContextCurrent(window);
-		glfwSetWindowUserPointer(window, this);
-
-		auto framebufferResize = [](GLFWwindow* window, const int w, const int h)
-		{
-			static_cast<LoggingProgram*>(glfwGetWindowUserPointer(window))->
-				framebuffer_size_callback(window, w, h);
-		};
-
-		auto mouse = [](GLFWwindow* window, const double x, const double y)
-		{
-			static_cast<LoggingProgram*>(glfwGetWindowUserPointer(window))->
-				mouse_callback(window, x, y);
-		};
-
-		auto scroll = [](GLFWwindow* window, const double x, const double y)
-		{
-			static_cast<LoggingProgram*>(glfwGetWindowUserPointer(window))->
-				scroll_callback(window, x, y);
-		};
-
-		//glfwSetFramebufferSizeCallback(window, framebufferResize);
-		//glfwSetCursorPosCallback(window, mouse);
-		//glfwSetScrollCallback(window, scroll);
-
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-		glfwSetCursorPos(window, lastMousePosition.x, lastMousePosition.y);
-
-		// Initialize GLAD — btw, black magic with this case as noted above
-		if (!gladLoadGLLoader(GLADloadproc(glfwGetProcAddress)))
-		{
-			std::cout << "Failed to initialize GLAD." << std::endl;
-			return INIT_ERROR;
-		}
-
-		// > configure global OpenGL state
-		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		//glEnable(GL_CULL_FACE);
-
-		//stbi_set_flip_vertically_on_load(1);
-
-		//----- end of setup -----//
-#pragma endregion 
-		glfwSwapInterval(0);
-
 		// create test sets	
 		enum class TreeType : unsigned { OCTREE = 0, KDTREE = 1, BSPTREE = 2 };
 		std::unordered_map<TreeType, std::string> treeTypes =
@@ -126,7 +53,6 @@ namespace slaggy
 		for (const auto& test : tests)
 		{
 			repetition++;
-			if (glfwWindowShouldClose(window)) break;
 
 			// Tree setup
 			std::unique_ptr<SpatialPartitioningTree> tree = nullptr;
@@ -162,22 +88,13 @@ namespace slaggy
 			double lastFrame = glfwGetTime();
 			double timer = lastFrame;
 
-			// Camera & Rendering setup
-			camera = new Camera(glm::vec3(0, 0, 20));
-			glm::mat4 view = glm::mat4(1);
-			glm::mat4 projection = glm::mat4(1);
-
-			while (fixedFrames < simulationFrames && !glfwWindowShouldClose(window))
+			while (fixedFrames < simulationFrames)
 			{
 				// time
 				auto currentFrame = glfwGetTime();
-				deltaTime = currentFrame - lastFrame;
+				const double deltaTime = currentFrame - lastFrame;
 				lastFrame = currentFrame;
 				lag += deltaTime;
-
-				// input
-				process_exit_input(window);
-				//process_input(window);
 
 				// fixed update
 				while (lag >= fixedTimerPerFrame)
@@ -214,21 +131,6 @@ namespace slaggy
 				// potential update here
 				// potential late update here
 
-				// rendering
-				view = camera->viewMatrix();
-				projection = glm::perspective(glm::radians(camera->fov),
-					float(INITIAL_SCREEN_WIDTH) / float(INITIAL_SCREEN_HEIGHT), 0.1f, 100.0f);
-
-				glClearColor(_clearColor.r, _clearColor.g, _clearColor.b, _clearColor.a);
-				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-				// draw something
-				//o.render(glm::vec3(0), view, projection);
-				tree->renderNodes(view, projection);
-
-				for (auto shapeCollider : shapeColliders)
-					shapeCollider->render(glm::vec3(0, 0, 1), view, projection);
-
 				frames++;
 
 				// reset every second
@@ -236,12 +138,10 @@ namespace slaggy
 				if (currentFrame - timer > 1)
 				{
 					timer++;
-					std::cout << "\tFPS: ";
 					if (frames != 1) std::cout << frames;
 					else
 					{
 						const float lowFrames = float(fixedTargetFramerate) / float(fixedUpdates);
-						std::cout << lowFrames;
 
 						if (lowFrames < 1)
 						{
@@ -250,18 +150,10 @@ namespace slaggy
 						}
 					}
 
-					std::cout << " | Fixed Updates: "
-						<< fixedUpdates << " | Second: " << static_cast<int>(currentFrame) << std::endl;
+					std::cout << "Fixed Updates: " << fixedUpdates << " | Second: " << static_cast<int>(currentFrame) << std::endl;
 					fixedUpdates = 0, frames = 0;
 				}
-
-				// double buffering, and poll IO events
-				glfwSwapBuffers(window);
-				glfwPollEvents();
 			}
-
-			// Clean-up!
-			delete camera;
 
 			log = Log::end();
 			std::cout << "Test #" << repetition << " End: (" << log.treeType << ", maximum depth " << log.maxDepth << ")";
@@ -273,7 +165,7 @@ namespace slaggy
 		return 0;
 	}
 
-	void LoggingProgram::createObject(
+	void LoggingNoRenderingProgram::createObject(
 		std::vector<std::unique_ptr<Entity>>& objectContainer,
 		std::vector<Shape*>& colliderContainer,
 		std::vector<OctreeMovement*>& movers,
@@ -320,58 +212,5 @@ namespace slaggy
 		om->velocity = velocity;
 		om->setBounds(*sc, bounds);
 		movers.push_back(om);
-	}
-
-	void LoggingProgram::framebuffer_size_callback(GLFWwindow* window, const int width, const int height) const
-	{
-		glViewport(0, 0, width, height);
-	}
-
-	void LoggingProgram::process_exit_input(GLFWwindow* window)
-	{
-		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-			glfwSetWindowShouldClose(window, true);
-	}
-	
-	void LoggingProgram::process_input(GLFWwindow* window)
-	{
-		if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
-			_clearColor = _defaultClearColor;
-
-		if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
-			_clearColor = { 0.7f, 0, 0, 1 };
-
-		unsigned int direction = 0;
-		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) direction |= Camera::movement::FORWARD;
-		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) direction |= Camera::movement::BACKWARD;
-		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) direction |= Camera::movement::LEFT;
-		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) direction |= Camera::movement::RIGHT;
-		const bool shiftPressed = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS;
-
-		if (direction)
-			camera->processMovement(Camera::movement(direction), shiftPressed, static_cast<float>(deltaTime));
-	}
-
-	void LoggingProgram::mouse_callback(GLFWwindow*, const double x, const double y)
-	{
-		if (firstMouse)
-		{
-			lastMousePosition = glm::vec2(x, y);
-			firstMouse = false;
-		}
-
-		const glm::vec2 mousePosition(x, y);
-		glm::vec2 offset = mousePosition - lastMousePosition;
-		lastMousePosition = mousePosition;
-
-		// > reversed since y-coordinates range from bottom to top
-		offset.y *= -1;
-
-		camera->processOrientation(offset);
-	}
-
-	void LoggingProgram::scroll_callback(GLFWwindow*, const double, const double yOffset) const
-	{
-		camera->processZoom(float(yOffset));
 	}
 }

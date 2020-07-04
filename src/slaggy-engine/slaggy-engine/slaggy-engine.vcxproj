@@ -161,6 +161,7 @@
     <ClCompile Include="collision\Plane.cpp" />
     <ClCompile Include="programs\LoggingProgram.cpp" />
     <ClCompile Include="programs\SpatialTestingProgram.cpp" />
+    <ClCompile Include="programs\LoggingNoRenderingProgram.cpp" />
     <ClCompile Include="utils\Icosphere.cpp" />
     <ClCompile Include="utils\SphereDebug.cpp" />
     <ClCompile Include="utils\Random.cpp" />
@@ -204,6 +205,7 @@
     <ClInclude Include="collision\Plane.hpp" />
     <ClInclude Include="programs\LoggingProgram.hpp" />
     <ClInclude Include="programs\SpatialTestingProgram.hpp" />
+    <ClInclude Include="programs\LoggingNoRenderingProgram.hpp" />
     <ClInclude Include="utils\Icosphere.h" />
     <ClInclude Include="utils\SphereDebug.hpp" />
     <ClInclude Include="utils\Random.hpp" />

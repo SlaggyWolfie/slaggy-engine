@@ -126,10 +126,13 @@
     <ClCompile Include="Log.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="programs\LoggingProgram.cpp">
+    <ClCompile Include="programs\SpatialTestingProgram.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="programs\SpatialTestingProgram.cpp">
+    <ClCompile Include="programs\LoggingNoRenderingProgram.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="programs\LoggingProgram.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -251,10 +254,13 @@
     <ClInclude Include="Log.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="programs\LoggingProgram.hpp">
+    <ClInclude Include="programs\SpatialTestingProgram.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="programs\SpatialTestingProgram.hpp">
+    <ClInclude Include="programs\LoggingNoRenderingProgram.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="programs\LoggingProgram.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

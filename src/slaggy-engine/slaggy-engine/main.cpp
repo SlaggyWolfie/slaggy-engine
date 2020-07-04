@@ -1,4 +1,5 @@
 #include "programs/LoggingProgram.hpp"
+#include "programs/LoggingNoRenderingProgram.hpp"
 
 #include <filesystem>
 #include "Log.hpp"
@@ -27,5 +28,5 @@ int main(const int argc, char* argv[])
 		slaggy::Log::output_path = potentialPath + "/";
 	}
 	
-	return slaggy::LoggingProgram().run();
+	return slaggy::LoggingNoRenderingProgram().run();
 }
