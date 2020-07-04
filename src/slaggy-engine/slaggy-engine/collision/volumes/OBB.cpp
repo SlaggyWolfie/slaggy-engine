@@ -6,24 +6,29 @@
 
 namespace slaggy
 {
-	bool OBB::intersects(const Shape& shape) const
+	bool OBB::intersects(const IIntersect& intersect) const
 	{
-		return shape.intersects(*this);
+		return intersect.intersects(*this);
+	}
+
+	bool OBB::intersects(const Plane& plane) const
+	{
+		return Geometry::intersects(*this, plane);
 	}
 
 	bool OBB::intersects(const Sphere& sphere) const
 	{
-		return Geometry::intersection(sphere, *this);
+		return Geometry::intersects(sphere, *this);
 	}
 
 	bool OBB::intersects(const AABB& aabb) const
 	{
-		return Geometry::intersection(aabb, *this);
+		return Geometry::intersects(aabb, *this);
 	}
 
 	bool OBB::intersects(const OBB& obb) const
 	{
-		return Geometry::intersection(obb, *this);
+		return Geometry::intersects(obb, *this);
 	}
 
 	glm::vec3 OBB::min() const

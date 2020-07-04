@@ -37,7 +37,6 @@ namespace slaggy
 		color4 _clearColor = _defaultClearColor;
 
 		double deltaTime = 0;
-		double lastFrame = 0;
 		bool firstMouse = true;
 
 		glm::vec2 lastMousePosition = glm::vec2

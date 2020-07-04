@@ -11,9 +11,12 @@
 
 namespace slaggy
 {
-	class Octree final : public SpatialPartitioningTree
+	class Octree final : public SpatialPartitioningTree, public AABB
 	{
 	public:
+		Transform* transform() const override;
+
+		void initialize(const glm::vec3& center, const glm::vec3& halfSize, unsigned maxDepth) override;
 		void reset() override;
 		std::vector<CollisionPair> collisions() const override;
 
@@ -21,7 +24,10 @@ namespace slaggy
 		void renderNodes(const glm::mat4& view, const glm::mat4& proj) const override;
 		
 	private:
+		unsigned _maxDepth = 0;
 		unsigned _currentDepth = 0;
+		
+		std::unique_ptr<Transform> _transform = nullptr;
 
 		std::array<std::unique_ptr<Octree>, 8> _nodes{};
 		std::unordered_set<Shape*> _objects{};

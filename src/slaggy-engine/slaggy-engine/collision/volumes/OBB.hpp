@@ -9,7 +9,8 @@ namespace slaggy
 	class OBB : public Box
 	{
 	public:
-		bool intersects(const Shape& shape) const override;
+		bool intersects(const IIntersect& intersect) const override;
+		bool intersects(const Plane& plane) const override;
 		bool intersects(const Sphere& sphere) const override;
 		bool intersects(const AABB& aabb) const override;
 		bool intersects(const OBB& obb) const override;

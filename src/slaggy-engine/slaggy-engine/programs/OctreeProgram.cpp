@@ -16,6 +16,7 @@
 #include <collision/colliders/SphereCollider.hpp>
 #include <collision/CollisionManager.hpp>
 #include "collision/spatial/KDTree.hpp"
+#include "collision/spatial/BSPTree.hpp"
 
 namespace slaggy
 {
@@ -103,7 +104,7 @@ namespace slaggy
 		//camera->updateForward();
 
 		//Octree octree;
-		KDTree tree;
+		BSPTree tree;
 		tree.initialize(glm::vec3(0), glm::vec3(5), 7);
 
 		//unsigned objectAmount = 0;
@@ -121,14 +122,14 @@ namespace slaggy
 		unsigned fixedFrames = 0, frames = 0, fixedUpdates = 0;
 		double lag = 0;
 
-		lastFrame = glfwGetTime();
+		double lastFrame = glfwGetTime();
 		double timer = lastFrame;
 
 		//while (!glfwWindowShouldClose(window))
 		while (fixedFrames < simulationFrames && !glfwWindowShouldClose(window))
 		{
 			// time
-			const auto currentFrame = glfwGetTime();
+			auto currentFrame = glfwGetTime();
 			deltaTime = currentFrame - lastFrame;
 			lastFrame = currentFrame;
 			lag += deltaTime;
@@ -139,8 +140,8 @@ namespace slaggy
 			// fixed update
 			while (lag >= fixedTimerPerFrame)
 			{
-				if (fixedFrames < 100)
-					createObject(objects, shapeColliders, movers, tree, glm::vec3(0), 1, 0.1f, 0.2f);
+				if (fixedFrames < 10)
+					createObject(objects, shapeColliders, movers, tree, glm::vec3(0), 4, 0.1f, 0.2f);
 
 				for (auto mover : movers) mover->fixedUpdate();
 
@@ -173,10 +174,16 @@ namespace slaggy
 			frames++;
 
 			// reset every second
-			if (glfwGetTime() - timer > 1)
+			currentFrame = glfwGetTime();
+			if (currentFrame - timer > 1)
 			{
 				timer++;
-				std::cout << "FPS: " << frames << " | Fixed Updates: " << fixedUpdates << " | Second: " << static_cast<int>(timer) << std::endl;
+				std::cout << "FPS: ";
+				if (frames != 1) std::cout << frames;
+				else std::cout << float(fixedTargetFramerate) / float(fixedUpdates);
+
+				std::cout << " | Fixed Updates: "
+					<< fixedUpdates << " | Second: " << static_cast<int>(currentFrame) << std::endl;
 				fixedUpdates = 0, frames = 0;
 			}
 

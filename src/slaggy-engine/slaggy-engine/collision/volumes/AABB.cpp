@@ -4,24 +4,29 @@
 
 namespace slaggy
 {
-	bool AABB::intersects(const Shape& shape) const
+	bool AABB::intersects(const IIntersect& intersect) const
 	{
-		return shape.intersects(*this);
+		return intersect.intersects(*this);
+	}
+
+	bool AABB::intersects(const Plane& plane) const
+	{
+		return Geometry::intersects(*this, plane);
 	}
 
 	bool AABB::intersects(const Sphere& sphere) const
 	{
-		return Geometry::intersection(sphere, *this);
+		return Geometry::intersects(sphere, *this);
 	}
 
 	bool AABB::intersects(const AABB& aabb) const
 	{
-		return Geometry::intersection(*this, aabb);
+		return Geometry::intersects(*this, aabb);
 	}
 
 	bool AABB::intersects(const OBB& obb) const
 	{
-		return Geometry::intersection(*this, obb);
+		return Geometry::intersects(*this, obb);
 	}
 
 	bool AABB::isInside(const glm::vec3 point) const

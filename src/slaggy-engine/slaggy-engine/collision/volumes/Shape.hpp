@@ -2,25 +2,17 @@
 #ifndef SHAPE_HPP
 #define SHAPE_HPP
 
+#include <collision/IIntersect.hpp>
+
 #include <glm/glm.hpp>
 
 namespace slaggy
 {
-	class Sphere;
-	class AABB;
-	class OBB;
 	class Transform;
 
-	class Shape
+	class Shape : public IIntersect
 	{		
-	public:
-		virtual ~Shape() = default;
-		
-		virtual bool intersects(const Shape& shape) const = 0;
-		virtual bool intersects(const Sphere& sphere) const = 0;
-		virtual bool intersects(const AABB& aabb) const = 0;
-		virtual bool intersects(const OBB& obb) const = 0;
-		
+	public:		
 		virtual glm::vec3 center() const;
 		virtual glm::mat4 transformationMatrix() const;
 		virtual glm::mat4 scaledTransformationMatrix() const;

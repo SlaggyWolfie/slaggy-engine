@@ -5,9 +5,24 @@
 #include <glm/ext/matrix_transform.hpp>
 
 #include <utils/BoxDebug.hpp>
+#include "collision/Geometry.hpp"
 
 namespace slaggy
 {
+	Transform* KDTree::transform() const
+	{
+		return _transform.get();
+	}
+	
+	void KDTree::initialize(const glm::vec3& center, const glm::vec3& halfSize, const unsigned maxDepth)
+	{
+		_transform = std::make_unique<Transform>();
+
+		transform()->setPosition(center);
+		setHalfSize(halfSize);
+		_maxDepth = maxDepth;
+	}
+	
 	void KDTree::split(const unsigned depth, Shapes objects)
 	{
 		if (objects.empty()) return;
@@ -29,9 +44,15 @@ namespace slaggy
 
 		// get median, in this case average, because
 		// it doesn't require additional sorting
+
 		for (auto& shape : intersecting)
 			point += shape->center()[axisIndex];
 		point /= intersecting.size();
+
+		//auto median = [](Shape* lhs, Shape* rhs) { return Geometry::magnitudeSqr(lhs->center()) < Geometry::magnitudeSqr(rhs->center()); };
+		//auto iter = intersecting.begin() + intersecting.size() / 2 - 1;
+		//std::nth_element(intersecting.begin(), iter, intersecting.end(), median);
+		//point = (*iter)->center()[axisIndex];
 
 		// after we find the splitting point along the axis
 		// create box defining points, in this case min and max
@@ -106,7 +127,7 @@ namespace slaggy
 	}
 
 	void KDTree::construct(const glm::vec3& min, const glm::vec3& max,
-	                       const unsigned depth, const unsigned maxDepth, const Shapes& objects)
+		const unsigned depth, const unsigned maxDepth, const Shapes& objects)
 	{
 		_currentDepth = depth;
 		initialize((min + max) / 2.0f, (max - min) / 2.0f, maxDepth);

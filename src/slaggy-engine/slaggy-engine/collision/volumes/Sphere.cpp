@@ -15,24 +15,29 @@ namespace slaggy
 		return _radius;
 	}
 
-	bool Sphere::intersects(const Shape& shape) const
+	bool Sphere::intersects(const IIntersect& shape) const
 	{
 		return shape.intersects(*this);
 	}
 
+	bool Sphere::intersects(const Plane& plane) const
+	{
+		return Geometry::intersects(*this, plane);
+	}
+
 	bool Sphere::intersects(const Sphere& sphere) const
 	{
-		return Geometry::intersection(*this, sphere);
+		return Geometry::intersects(*this, sphere);
 	}
 
 	bool Sphere::intersects(const AABB& aabb) const
 	{
-		return Geometry::intersection(*this, aabb);
+		return Geometry::intersects(*this, aabb);
 	}
 
 	bool Sphere::intersects(const OBB& obb) const
 	{
-		return Geometry::intersection(*this, obb);
+		return Geometry::intersects(*this, obb);
 	}
 
 	bool Sphere::isInside(const glm::vec3 point) const

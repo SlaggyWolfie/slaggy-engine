@@ -3,16 +3,16 @@
 #include <glm/ext/matrix_transform.hpp>
 
 #include <core/Entity.hpp>
-#include <core/Transform.hpp>
 
 #include <collision/volumes/Sphere.hpp>
 #include <collision/volumes/AABB.hpp>
 #include <collision/volumes/OBB.hpp>
-
-#include <OctreeMovement.hpp>
+#include <collision/Plane.hpp>
 
 namespace slaggy
 {
+	float Geometry::epsilon = 0.00001f;
+	
 	bool Geometry::sphereTest(const Shape& lhs, const Shape& rhs)
 	{
 		return glm::distance(lhs.center(), rhs.center()) <= lhs.radius() + rhs.radius();
@@ -30,12 +30,57 @@ namespace slaggy
 			&& lmax.z > rmin.z && lmin.z < rmax.z;
 	}
 
-	bool Geometry::intersection(const Sphere& one, const Sphere& other)
+	bool Geometry::intersects(const Plane& lhs, const Plane& rhs)
+	{
+		const glm::vec3 direction = glm::cross(lhs.normal, rhs.normal);
+		return magnitudeSqr(direction) > epsilon;
+	}
+
+	bool Geometry::intersects(const Sphere& one, const Sphere& other)
 	{
 		return sphereTest(one, other);
 	}
 
-	bool Geometry::intersection(const Sphere& sphere, const AABB& aabb)
+	bool Geometry::intersects(const Sphere& sphere, const Plane& plane)
+	{
+		const float sphereRadius = sphere.radius();
+		const glm::vec3 sphereCenter = sphere.center();
+
+		const glm::vec3 closestPoint = plane.closestPointTo(sphereCenter);
+		const float distanceSq = distanceSqr(sphereCenter, closestPoint);
+
+		return sphereRadius * sphereRadius > distanceSq;
+	}
+
+	bool Geometry::intersects(const AABB& aabb, const Plane& plane)
+	{
+		const float length = glm::dot(aabb.size(), Geometry::fabsf(plane.normal));
+
+		const float dot = glm::dot(plane.normal, aabb.center());
+		const float dist = dot - plane.distance();
+
+		return std::fabsf(dist) <= length;
+	}
+
+	bool Geometry::intersects(const OBB& obb, const Plane& plane)
+	{
+		const glm::mat3 rotationalMatrix = glm::mat3(obb.transformationMatrix());
+		const glm::vec3 projectedPlaneNormal = glm::vec3
+		(
+			glm::dot(plane.normal, rotationalMatrix[0]),
+			glm::dot(plane.normal, rotationalMatrix[1]),
+			glm::dot(plane.normal, rotationalMatrix[2])
+		);
+
+		const float length = glm::dot(obb.size(), Geometry::fabsf(projectedPlaneNormal));
+
+		const float dot = glm::dot(plane.normal, obb.center());
+		const float dist = dot - plane.distance();
+
+		return std::fabsf(dist) <= length;
+	}
+
+	bool Geometry::intersects(const Sphere& sphere, const AABB& aabb)
 	{
 		const bool radiusCheck = sphereTest(sphere, aabb);
 		if (!radiusCheck) return false;
@@ -68,7 +113,7 @@ namespace slaggy
 		return squareDistance <= sr * sr;
 	}
 
-	bool Geometry::intersection(const Sphere& sphere, const OBB& obb)
+	bool Geometry::intersects(const Sphere& sphere, const OBB& obb)
 	{
 		const glm::vec3 spherePosition = sphere.center();
 		const glm::vec3 closest = obb.closestPointTo(spherePosition);
@@ -77,20 +122,20 @@ namespace slaggy
 		return distanceSqr(spherePosition, closest) < radius * radius;
 	}
 
-	bool Geometry::intersection(const AABB& lhs, const AABB& rhs)
+	bool Geometry::intersects(const AABB& lhs, const AABB& rhs)
 	{
 		return sphereTest(lhs, rhs) && aabbTest(lhs, rhs);
 	}
 
-	bool Geometry::intersection(const AABB& lhs, const OBB& rhs)
+	bool Geometry::intersects(const AABB& aabb, const OBB& obb)
 	{
-		const bool radiusCheck = sphereTest(lhs, rhs);
+		const bool radiusCheck = sphereTest(aabb, obb);
 		if (!radiusCheck) return false;
 
-		return satTest(lhs, rhs);
+		return satTest(aabb, obb);
 	}
 
-	bool Geometry::intersection(const OBB& lhs, const OBB& rhs)
+	bool Geometry::intersects(const OBB& lhs, const OBB& rhs)
 	{
 		const bool radiusCheck = sphereTest(lhs, rhs);
 		if (!radiusCheck) return false;
@@ -179,14 +224,24 @@ namespace slaggy
 		return true;
 	}
 
-	float Geometry::distanceSqr(const glm::vec3 lhs, const glm::vec3 rhs)
+	float Geometry::distanceSqr(const glm::vec3& lhs, const glm::vec3& rhs)
 	{
 		return magnitudeSqr(lhs - rhs);
 	}
 
-	float Geometry::magnitudeSqr(const glm::vec3 v)
+	float Geometry::magnitudeSqr(const glm::vec3& v)
 	{
 		return v.x * v.x + v.y * v.y + v.z * v.z;
+	}
+
+	glm::vec3 Geometry::fabsf(const glm::vec3& v)
+	{
+		return glm::vec3
+		(
+			std::fabsf(v.x),
+			std::fabsf(v.y),
+			std::fabsf(v.z)
+		);
 	}
 
 	void Geometry::reflectVelocity(const glm::vec3& centerLhs, const glm::vec3& centerRhs, glm::vec3& velocityLhs, glm::vec3& velocityRhs)

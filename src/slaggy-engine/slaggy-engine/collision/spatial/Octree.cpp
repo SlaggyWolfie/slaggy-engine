@@ -11,7 +11,21 @@ namespace slaggy
 		// example: i = 3 (0b011) -> cell = {1, 1, 0}
 		const glm::vec3 cell(index & 1, (index & 0b010) >> 1, (index & 0b100) >> 2);
 		return cell * 2.0f - glm::vec3(1);
-	};
+	}
+
+	Transform* Octree::transform() const
+	{
+		return _transform.get();
+	}
+	
+	void Octree::initialize(const glm::vec3& center, const glm::vec3& halfSize, const unsigned maxDepth)
+	{
+		_transform = std::make_unique<Transform>();
+
+		transform()->setPosition(center);
+		setHalfSize(halfSize);
+		_maxDepth = maxDepth;
+	}
 
 	void Octree::split(const unsigned depth, Shapes objects)
 	{

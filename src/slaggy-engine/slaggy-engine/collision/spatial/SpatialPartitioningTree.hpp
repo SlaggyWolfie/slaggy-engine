@@ -14,14 +14,14 @@ namespace slaggy
 {
 	class Transform;
 
-	class SpatialPartitioningTree : public AABB
+	class SpatialPartitioningTree
 	{
-	protected:
-		typedef std::vector<Shape*> Shapes;
 	public:
-		Transform* transform() const override;
+		typedef std::vector<Shape*> Shapes;
 
-		void initialize(const glm::vec3& center, const glm::vec3& halfSize, unsigned maxDepth);
+		virtual ~SpatialPartitioningTree() = default;
+		
+		virtual void initialize(const glm::vec3& center, const glm::vec3& halfSize, unsigned maxDepth) = 0;
 
 		void startSplit(Shapes objects);
 		virtual void reset() = 0;
@@ -29,11 +29,7 @@ namespace slaggy
 		virtual std::vector<CollisionPair> collisions() const = 0;
 		virtual void renderNodes(const glm::mat4& view, const glm::mat4& proj) const = 0;
 
-	protected:		
-		unsigned _maxDepth = 0;
-		unsigned _currentDepth = 0;
-		std::unique_ptr<Transform> _transform{ };
-
+	protected:
 		virtual void split(unsigned depth, Shapes objects) = 0;
 	};
 }
