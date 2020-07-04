@@ -18,6 +18,8 @@
 #include "collision/spatial/KDTree.hpp"
 #include "collision/spatial/BSPTree.hpp"
 
+#include <Log.hpp>
+
 namespace slaggy
 {
 	int OctreeProgram::run()

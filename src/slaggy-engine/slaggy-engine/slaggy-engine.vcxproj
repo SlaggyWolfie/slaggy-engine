@@ -149,6 +149,7 @@
     <ClCompile Include="engine\Mesh.cpp" />
     <ClCompile Include="engine\Model.cpp" />
     <ClCompile Include="engine\Shader.cpp" />
+    <ClCompile Include="Log.cpp" />
     <ClCompile Include="programs\OctreeProgram.cpp" />
     <ClCompile Include="collision\spatial\SpatialPartitioningTree.cpp" />
     <ClCompile Include="collision\spatial\BSPTree.cpp" />
@@ -190,6 +191,7 @@
     <ClInclude Include="engine\Mesh.hpp" />
     <ClInclude Include="engine\Model.hpp" />
     <ClInclude Include="engine\Shader.hpp" />
+    <ClInclude Include="Log.hpp" />
     <ClInclude Include="programs\OctreeProgram.hpp" />
     <ClInclude Include="collision\spatial\SpatialPartitioningTree.hpp" />
     <ClInclude Include="collision\spatial\BSPTree.hpp" />
