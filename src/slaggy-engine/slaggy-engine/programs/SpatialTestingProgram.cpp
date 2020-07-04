@@ -1,4 +1,4 @@
-#include "OctreeProgram.hpp"
+#include "SpatialTestingProgram.hpp"
 
 #include <iostream>
 
@@ -22,7 +22,7 @@
 
 namespace slaggy
 {
-	int OctreeProgram::run()
+	int SpatialTestingProgram::run()
 	{
 #pragma region init
 		// Initialize GLFW context with OpenGL version 3.3 using the Core OpenGL profile
@@ -54,19 +54,19 @@ namespace slaggy
 
 		auto framebufferResize = [](GLFWwindow* window, const int w, const int h)
 		{
-			static_cast<OctreeProgram*>(glfwGetWindowUserPointer(window))->
+			static_cast<SpatialTestingProgram*>(glfwGetWindowUserPointer(window))->
 				framebuffer_size_callback(window, w, h);
 		};
 
 		auto mouse = [](GLFWwindow* window, const double x, const double y)
 		{
-			static_cast<OctreeProgram*>(glfwGetWindowUserPointer(window))->
+			static_cast<SpatialTestingProgram*>(glfwGetWindowUserPointer(window))->
 				mouse_callback(window, x, y);
 		};
 
 		auto scroll = [](GLFWwindow* window, const double x, const double y)
 		{
-			static_cast<OctreeProgram*>(glfwGetWindowUserPointer(window))->
+			static_cast<SpatialTestingProgram*>(glfwGetWindowUserPointer(window))->
 				scroll_callback(window, x, y);
 		};
 
@@ -95,7 +95,7 @@ namespace slaggy
 		//----- end of setup -----//
 #pragma endregion 
 		glfwSwapInterval(0);
-
+				
 		const glm::mat4 identity(1);
 		glm::mat4 view, projection;
 		glm::mat4 model = view = projection = identity;
@@ -201,7 +201,7 @@ namespace slaggy
 		return 0;
 	}
 
-	void OctreeProgram::createObject(
+	void SpatialTestingProgram::createObject(
 		std::vector<std::unique_ptr<Entity>>& objectContainer,
 		std::vector<Shape*>& colliderContainer,
 		std::vector<OctreeMovement*>& movers,
@@ -250,12 +250,12 @@ namespace slaggy
 		movers.push_back(om);
 	}
 
-	void OctreeProgram::framebuffer_size_callback(GLFWwindow* window, const int width, const int height) const
+	void SpatialTestingProgram::framebuffer_size_callback(GLFWwindow* window, const int width, const int height) const
 	{
 		glViewport(0, 0, width, height);
 	}
 
-	void OctreeProgram::process_input(GLFWwindow* window)
+	void SpatialTestingProgram::process_input(GLFWwindow* window)
 	{
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 			glfwSetWindowShouldClose(window, true);
@@ -277,7 +277,7 @@ namespace slaggy
 			camera->processMovement(Camera::movement(direction), shiftPressed, static_cast<float>(deltaTime));
 	}
 
-	void OctreeProgram::mouse_callback(GLFWwindow*, const double x, const double y)
+	void SpatialTestingProgram::mouse_callback(GLFWwindow*, const double x, const double y)
 	{
 		if (firstMouse)
 		{
@@ -295,7 +295,7 @@ namespace slaggy
 		camera->processOrientation(offset);
 	}
 
-	void OctreeProgram::scroll_callback(GLFWwindow*, const double, const double yOffset) const
+	void SpatialTestingProgram::scroll_callback(GLFWwindow*, const double, const double yOffset) const
 	{
 		camera->processZoom(float(yOffset));
 	}

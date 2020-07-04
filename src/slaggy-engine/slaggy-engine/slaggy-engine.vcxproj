@@ -82,6 +82,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>..\..\..\include\;$(ProjectDir);$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\..\lib\release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -138,6 +140,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>assimp-vc142-mt.lib;glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -150,11 +153,12 @@
     <ClCompile Include="engine\Model.cpp" />
     <ClCompile Include="engine\Shader.cpp" />
     <ClCompile Include="Log.cpp" />
-    <ClCompile Include="programs\OctreeProgram.cpp" />
     <ClCompile Include="collision\spatial\SpatialPartitioningTree.cpp" />
     <ClCompile Include="collision\spatial\BSPTree.cpp" />
     <ClCompile Include="collision\SuperPlane.cpp" />
     <ClCompile Include="collision\Plane.cpp" />
+    <ClCompile Include="programs\LoggingProgram.cpp" />
+    <ClCompile Include="programs\SpatialTestingProgram.cpp" />
     <ClCompile Include="utils\Icosphere.cpp" />
     <ClCompile Include="utils\SphereDebug.cpp" />
     <ClCompile Include="utils\Random.cpp" />
@@ -192,11 +196,12 @@
     <ClInclude Include="engine\Model.hpp" />
     <ClInclude Include="engine\Shader.hpp" />
     <ClInclude Include="Log.hpp" />
-    <ClInclude Include="programs\OctreeProgram.hpp" />
     <ClInclude Include="collision\spatial\SpatialPartitioningTree.hpp" />
     <ClInclude Include="collision\spatial\BSPTree.hpp" />
     <ClInclude Include="collision\SuperPlane.hpp" />
     <ClInclude Include="collision\Plane.hpp" />
+    <ClInclude Include="programs\LoggingProgram.hpp" />
+    <ClInclude Include="programs\SpatialTestingProgram.hpp" />
     <ClInclude Include="utils\Icosphere.h" />
     <ClInclude Include="utils\SphereDebug.hpp" />
     <ClInclude Include="utils\Random.hpp" />

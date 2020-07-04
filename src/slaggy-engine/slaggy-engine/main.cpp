@@ -1,11 +1,7 @@
-#include "programs/HelloTriangleProgram.hpp"
-#include "programs/OctreeProgram.hpp"
-#include "programs/CoreTestProgram.hpp"
+#include "programs/LoggingProgram.hpp"
 
 
 int main()
 {
-	return slaggy::OctreeProgram().run();
-	return slaggy::CoreTestProgram().run();
-	return slaggy::HelloTriangleProgram().run();
+	return slaggy::LoggingProgram().run();
 }

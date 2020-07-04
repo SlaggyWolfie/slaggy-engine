@@ -22,7 +22,7 @@ namespace slaggy
 	class Shape;
 	class OctreeMovement;
 
-	class OctreeProgram : public Program
+	class SpatialTestingProgram : public Program
 	{
 	public:
 		using color = glm::vec3;

@@ -4,7 +4,6 @@
 
 namespace slaggy
 {
-	std::vector<Log> Log::_results = { };
 	std::unique_ptr<Log> Log::_current = nullptr;
 
 	Log& Log::start()
@@ -13,10 +12,14 @@ namespace slaggy
 		return *_current;
 	}
 
-	void Log::end()
+	Log Log::end()
 	{
-		_results.push_back(*_current);
+		output(_current->treeType + std::to_string(_current->maxDepth) + ".csv");
+		
+		Log log = *_current;
 		_current = nullptr;
+		
+		return log;
 	}
 
 	Log& Log::current()
@@ -30,20 +33,22 @@ namespace slaggy
 
 		std::vector<std::string> row =
 		{
-			"Test #", "Tree Type", "Maximum Depth", "Collision Tests",
-			"Calculation Time for Collisions Tests"
+			//"Test #", "Tree Type", "Maximum Depth", 
+			"Frame", "Collision Tests", "Calculation Time"
 		};
 
+		std::string title = treeType + std::string(" Depth ") + std::to_string(maxDepth);
+		if (!success) title += " (early end)";
+		
+		output.push_back({ { title } });
 		output.push_back(row);
 
-		for (const auto& log : _results)
+		for (const auto& snapshot : data)
 		{
 			row.clear();
-			row.push_back(std::to_string(log.testNumber));
-			row.push_back(log.treeType);
-			row.push_back(std::to_string(log.maxDepth));
-			row.push_back(std::to_string(average<unsigned>(log.collisionTests)));
-			row.push_back(std::to_string(average<double>(log.timeCalcCollTests)));
+			row.push_back(std::to_string(snapshot.frame));
+			row.push_back(std::to_string(snapshot.collisionTests));
+			row.push_back(std::to_string(snapshot.calculationTime));
 
 			output.push_back(row);
 		}
@@ -55,18 +60,18 @@ namespace slaggy
 	{
 		std::ofstream file(path);
 
+		// CSV format
 		const char separator = ',';
 
 		// <empty>, <stat 1>, ... , <stat n>		
-		for (const auto& i : data)
+		
+		for (unsigned i = 0; i < data.size(); ++i)
 		{
-			for (const auto& j : i)
+			for (unsigned j = 0; j < data[i].size(); ++j)
 			{
-				file << j;
-
-				if (j == i.back())
-					file << separator;
-				else file << std::endl;
+				file << data[i][j];
+				if (j == data[i].size() - 1) file << std::endl;
+				else file << separator;
 			}
 		}
 
@@ -75,6 +80,11 @@ namespace slaggy
 
 	void Log::output(const std::string& path)
 	{
-		output(serialize(), path);
+		output(_current->serialize(), path);
+	}
+
+	void Log::takeSnapshot()
+	{
+		data.push_back(snapshot);
 	}
 }
