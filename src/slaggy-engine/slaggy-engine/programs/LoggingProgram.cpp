@@ -120,6 +120,7 @@ namespace slaggy
 		// sim setup
 		const unsigned simulationFrames = 2000;
 		const unsigned objectAmount = 1000;
+		Random::setSeed(7777777);
 
 		int repetition = 0;
 		for (const auto& test : tests)
