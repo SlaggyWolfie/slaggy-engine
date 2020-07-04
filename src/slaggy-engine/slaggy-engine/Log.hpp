@@ -11,7 +11,8 @@ namespace slaggy
 	class Log
 	{
 	public:
-
+		static std::string output_path;
+		
 		static Log& start();
 		static Log& current();
 		static Log end();

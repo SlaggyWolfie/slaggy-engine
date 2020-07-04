@@ -4,6 +4,7 @@
 
 namespace slaggy
 {
+	std::string Log::output_path;
 	std::unique_ptr<Log> Log::_current = nullptr;
 
 	Log& Log::start()
@@ -14,7 +15,7 @@ namespace slaggy
 
 	Log Log::end()
 	{
-		output(_current->treeType + std::to_string(_current->maxDepth) + ".csv");
+		output(output_path +_current->treeType + std::to_string(_current->maxDepth) + ".csv");
 		
 		Log log = *_current;
 		_current = nullptr;

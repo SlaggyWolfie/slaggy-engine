@@ -144,7 +144,7 @@ namespace slaggy
 			Log& log = Log::start();
 			log.treeType = treeTypes[test.first];
 			log.maxDepth = test.second;
-			std::cout << "Test #" << repetition << " Start: (" << log.treeType << ", maximum depth " << log.maxDepth << ")" << std::endl;
+			std::cout << "Test #" << repetition + 1 << " Start: (" << log.treeType << ", maximum depth " << log.maxDepth << ")" << std::endl;
 
 			// containers
 			std::vector<std::unique_ptr<Entity>> objects;
