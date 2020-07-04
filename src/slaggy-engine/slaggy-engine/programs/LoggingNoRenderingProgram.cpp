@@ -8,6 +8,7 @@
 
 #include <core/Entity.hpp>
 #include <engine/Shader.hpp>
+#include <engine/Camera.hpp>
 #include <utils/Random.hpp>
 
 #include <OctreeMovement.hpp>
@@ -23,6 +24,47 @@ namespace slaggy
 {
 	int LoggingNoRenderingProgram::run()
 	{
+#pragma region init
+		// Initialize GLFW context with OpenGL version 3.3 using the Core OpenGL profile
+		glfwInit();
+
+		//-----Setup-----//
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+		// MacOS-specific code
+#ifdef __APPLE__
+		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
+
+		// Create window
+		GLFWwindow* window = glfwCreateWindow(INITIAL_SCREEN_WIDTH, INITIAL_SCREEN_HEIGHT, "My OpenGL Window!", nullptr, nullptr);
+		if (window == nullptr)
+		{
+			std::cout << "Failed to create GLFW window." << std::endl;
+			glfwTerminate();
+			return INIT_ERROR;
+		}
+
+		// Set viewport size within window and assign resize function
+		//glViewport(0, 0, INITIAL_SCREEN_WIDTH, INITIAL_SCREEN_HEIGHT);
+		glfwMakeContextCurrent(window);
+		glfwSetWindowUserPointer(window, this);
+
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		glfwSetCursorPos(window, lastMousePosition.x, lastMousePosition.y);
+
+		// Initialize GLAD — btw, black magic with this case as noted above
+		if (!gladLoadGLLoader(GLADloadproc(glfwGetProcAddress)))
+		{
+			std::cout << "Failed to initialize GLAD." << std::endl;
+			return INIT_ERROR;
+		}
+		//----- end of setup -----//
+#pragma endregion 
+		glfwSwapInterval(0);
+
 		// create test sets	
 		enum class TreeType : unsigned { OCTREE = 0, KDTREE = 1, BSPTREE = 2 };
 		std::unordered_map<TreeType, std::string> treeTypes =
@@ -53,6 +95,7 @@ namespace slaggy
 		for (const auto& test : tests)
 		{
 			repetition++;
+			if (glfwWindowShouldClose(window)) break;
 
 			// Tree setup
 			std::unique_ptr<SpatialPartitioningTree> tree = nullptr;
@@ -88,13 +131,16 @@ namespace slaggy
 			double lastFrame = glfwGetTime();
 			double timer = lastFrame;
 
-			while (fixedFrames < simulationFrames)
+			while (fixedFrames < simulationFrames && !glfwWindowShouldClose(window))
 			{
 				// time
 				auto currentFrame = glfwGetTime();
-				const double deltaTime = currentFrame - lastFrame;
+				deltaTime = currentFrame - lastFrame;
 				lastFrame = currentFrame;
 				lag += deltaTime;
+
+				// input
+				process_exit_input(window);
 
 				// fixed update
 				while (lag >= fixedTimerPerFrame)
@@ -109,7 +155,7 @@ namespace slaggy
 
 					double collisionTestTime = glfwGetTime();
 
-						auto collisions = tree->collisions();
+					auto collisions = tree->collisions();
 
 					collisionTestTime = glfwGetTime() - collisionTestTime;
 
@@ -122,7 +168,7 @@ namespace slaggy
 					log.snapshot.frame = fixedFrames;
 					// usually in seconds
 					// but now measuring in ns because it's too small
-					log.snapshot.calculationTime = collisionTestTime * 1000000; 
+					log.snapshot.calculationTime = collisionTestTime * 1000000;
 					log.snapshot.collisionTests = collisions.size();
 
 					log.takeSnapshot();
@@ -138,10 +184,10 @@ namespace slaggy
 				if (currentFrame - timer > 1)
 				{
 					timer++;
-					if (frames != 1) std::cout << frames;
-					else
+					if (frames == 1)  
 					{
 						const float lowFrames = float(fixedTargetFramerate) / float(fixedUpdates);
+						std::cout << lowFrames;
 
 						if (lowFrames < 1)
 						{
@@ -150,9 +196,13 @@ namespace slaggy
 						}
 					}
 
-					std::cout << "Fixed Updates: " << fixedUpdates << " | Second: " << static_cast<int>(currentFrame) << std::endl;
+					std::cout << "\tFixed Updates: " << fixedUpdates << " | Second: " << static_cast<int>(currentFrame) << std::endl;
 					fixedUpdates = 0, frames = 0;
 				}
+
+				// double buffering, and poll IO events
+				glfwSwapBuffers(window);
+				glfwPollEvents();
 			}
 
 			log = Log::end();
@@ -212,5 +262,11 @@ namespace slaggy
 		om->velocity = velocity;
 		om->setBounds(*sc, bounds);
 		movers.push_back(om);
+	}
+
+	void LoggingNoRenderingProgram::process_exit_input(GLFWwindow* window)
+	{
+		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+			glfwSetWindowShouldClose(window, true);
 	}
 }

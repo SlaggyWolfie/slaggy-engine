@@ -25,6 +25,24 @@ namespace slaggy
 	class LoggingNoRenderingProgram : public Program
 	{
 	public:
+		using color = glm::vec3;
+		using color4 = glm::vec4;
+
+		const int INIT_ERROR = -1;
+		const int INITIAL_SCREEN_WIDTH = 800;
+		const int INITIAL_SCREEN_HEIGHT = 600;
+
+		double deltaTime = 0;
+		bool firstMouse = true;
+
+		glm::vec2 lastMousePosition = glm::vec2
+		(
+			float(INITIAL_SCREEN_WIDTH) / 2,
+			float(INITIAL_SCREEN_HEIGHT) / 2
+		);
+
+		static void process_exit_input(GLFWwindow* window);
+
 		int run() override;
 
 		void createObject(
