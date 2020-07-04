@@ -15,11 +15,12 @@ namespace slaggy
 
 	Log Log::end()
 	{
-		output(output_path +_current->treeType + std::to_string(_current->maxDepth) + ".csv");
-		
+		if (!output_path.empty())
+			output(output_path + _current->treeType + std::to_string(_current->maxDepth) + ".csv");
+
 		Log log = *_current;
 		_current = nullptr;
-		
+
 		return log;
 	}
 
@@ -40,7 +41,7 @@ namespace slaggy
 
 		std::string title = treeType + std::string(" Depth ") + std::to_string(maxDepth);
 		if (!success) title += " (early end)";
-		
+
 		output.push_back({ { title } });
 		output.push_back(row);
 
@@ -65,7 +66,7 @@ namespace slaggy
 		const char separator = ',';
 
 		// <empty>, <stat 1>, ... , <stat n>		
-		
+
 		for (unsigned i = 0; i < data.size(); ++i)
 		{
 			for (unsigned j = 0; j < data[i].size(); ++j)

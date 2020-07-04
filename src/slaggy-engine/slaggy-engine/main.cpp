@@ -3,20 +3,9 @@
 
 #include <filesystem>
 #include "Log.hpp"
-//#include <iostream>
 
 int main(const int argc, char* argv[])
-{
-	//std::cout << "Params Count: " << argc << std::endl;
-
-	//std::cout << "Params: \n";
-	//for (auto i = 0; i < argc; ++i)
-	//{
-	//	std::cout << argv[i] << '\n';
-	//}
-
-	//std::cout << std::endl;
-	
+{	
 	if (argc == 2)
 	{
 		int index = 0;
