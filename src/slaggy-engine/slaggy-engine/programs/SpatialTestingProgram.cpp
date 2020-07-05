@@ -18,8 +18,6 @@
 #include "collision/spatial/KDTree.hpp"
 #include "collision/spatial/BSPTree.hpp"
 
-#include <Log.hpp>
-
 namespace slaggy
 {
 	int SpatialTestingProgram::run()
@@ -106,8 +104,8 @@ namespace slaggy
 		//camera->updateForward();
 
 		//Octree octree;
-		BSPTree tree;
-		tree.initialize(glm::vec3(0), glm::vec3(5), 7);
+		Octree tree;
+		tree.initialize(glm::vec3(0), glm::vec3(5), 3);
 
 		//unsigned objectAmount = 0;
 		std::vector<std::unique_ptr<Entity>> objects;
@@ -142,7 +140,7 @@ namespace slaggy
 			// fixed update
 			while (lag >= fixedTimerPerFrame)
 			{
-				if (fixedFrames < 10)
+				if (fixedFrames < 100)
 					createObject(objects, shapeColliders, movers, tree, glm::vec3(0), 4, 0.1f, 0.2f);
 
 				for (auto mover : movers) mover->fixedUpdate();

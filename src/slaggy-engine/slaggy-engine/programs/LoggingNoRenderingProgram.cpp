@@ -63,7 +63,7 @@ namespace slaggy
 		}
 		//----- end of setup -----//
 #pragma endregion 
-		glfwSwapInterval(0);
+		//glfwSwapInterval(0);
 
 		// create test sets	
 		enum class TreeType : unsigned { OCTREE = 0, KDTREE = 1, BSPTREE = 2 };
@@ -76,15 +76,21 @@ namespace slaggy
 
 		std::vector<std::pair<TreeType, unsigned>> tests;
 		tests.emplace_back(TreeType::OCTREE, 0);
+		tests.emplace_back(TreeType::OCTREE, 3);
+		tests.emplace_back(TreeType::OCTREE, 7);
+		tests.emplace_back(TreeType::KDTREE, 3);
+		tests.emplace_back(TreeType::KDTREE, 7);
+		tests.emplace_back(TreeType::BSPTREE, 3);
+		tests.emplace_back(TreeType::BSPTREE, 7);
 
-		for (unsigned i = 0; i < 3; ++i)
-		{
-			const auto type = static_cast<TreeType>(i);
-			for (unsigned j = 1; j < 10; ++j)
-			{
-				tests.emplace_back(type, j);
-			}
-		}
+		//for (unsigned i = 0; i < 3; ++i)
+		//{
+		//	const auto type = static_cast<TreeType>(i);
+		//	for (unsigned j = 1; j < 10; ++j)
+		//	{
+		//		tests.emplace_back(type, j);
+		//	}
+		//}
 
 		// sim setup
 		const unsigned simulationFrames = 2000;
@@ -182,11 +188,14 @@ namespace slaggy
 				// reset every second
 				currentFrame = glfwGetTime();
 				if (currentFrame - timer > 1)
-				{
+				{					
 					timer++;
-					if (frames == 1)  
+					std::cout << "\tFPS: ";
+					if (frames != 1) std::cout << frames;
+					else
 					{
 						const float lowFrames = float(fixedTargetFramerate) / float(fixedUpdates);
+						std::cout << lowFrames;
 
 						if (lowFrames < 1)
 						{
