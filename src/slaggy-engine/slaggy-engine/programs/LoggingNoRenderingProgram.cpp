@@ -187,7 +187,6 @@ namespace slaggy
 					if (frames == 1)  
 					{
 						const float lowFrames = float(fixedTargetFramerate) / float(fixedUpdates);
-						std::cout << lowFrames;
 
 						if (lowFrames < 1)
 						{

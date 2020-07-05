@@ -17,5 +17,6 @@ int main(const int argc, char* argv[])
 		slaggy::Log::output_path = potentialPath + "/";
 	}
 	
-	return slaggy::LoggingNoRenderingProgram().run();
+	//return slaggy::LoggingNoRenderingProgram().run();
+	return slaggy::LoggingProgram().run();
 }
