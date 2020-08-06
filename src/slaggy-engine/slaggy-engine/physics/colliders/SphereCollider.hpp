@@ -3,7 +3,7 @@
 #define SPHERE_COLLIDER_HPP
 
 #include <core/Component.hpp>
-#include <collision/volumes/Sphere.hpp>
+#include <physics/volumes/Sphere.hpp>
 
 namespace slaggy
 {

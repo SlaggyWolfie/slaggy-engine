@@ -2,7 +2,7 @@
 #ifndef POINT_PLANE_HPP
 #define POINT_PLANE_HPP
 
-#include <collision/Plane.hpp>
+#include <physics/Plane.hpp>
 
 namespace slaggy
 {

@@ -6,7 +6,7 @@
 #include <glm/gtx/vector_angle.hpp>
 
 #include <utils/BoxDebug.hpp>
-#include <collision/Geometry.hpp>
+#include <physics/Geometry.hpp>
 
 namespace slaggy
 {

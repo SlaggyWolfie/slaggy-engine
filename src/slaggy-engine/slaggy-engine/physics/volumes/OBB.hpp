@@ -2,7 +2,7 @@
 #ifndef OBB_HPP
 #define OBB_HPP
 
-#include <collision/volumes/Box.hpp>
+#include <physics/volumes/Box.hpp>
 
 namespace slaggy
 {

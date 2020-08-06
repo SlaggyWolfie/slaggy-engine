@@ -2,7 +2,7 @@
 #ifndef SHAPE_HPP
 #define SHAPE_HPP
 
-#include <collision/IIntersect.hpp>
+#include <physics/IIntersect.hpp>
 
 #include <glm/glm.hpp>
 

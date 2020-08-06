@@ -2,7 +2,7 @@
 #ifndef SPHERE_HPP
 #define SPHERE_HPP
 
-#include <collision/volumes/Shape.hpp>
+#include <physics/volumes/Shape.hpp>
 
 namespace slaggy
 {

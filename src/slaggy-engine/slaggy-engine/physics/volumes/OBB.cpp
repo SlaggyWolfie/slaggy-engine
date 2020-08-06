@@ -2,7 +2,7 @@
 
 #include <glm/ext/matrix_transform.hpp>
 
-#include <collision/Geometry.hpp>
+#include <physics/Geometry.hpp>
 
 namespace slaggy
 {

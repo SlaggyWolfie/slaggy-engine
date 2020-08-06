@@ -2,12 +2,12 @@
 #ifndef SPATIAL_PARTITIONING_TREE_HPP
 #define SPATIAL_PARTITIONING_TREE_HPP
 
-#include <collision/volumes/AABB.hpp>
+#include <physics/volumes/AABB.hpp>
 
 #include <vector>
 #include <memory>
 
-#include <collision/CollisionPair.hpp>
+#include <physics/CollisionPair.hpp>
 #include <core/Transform.hpp>
 
 namespace slaggy

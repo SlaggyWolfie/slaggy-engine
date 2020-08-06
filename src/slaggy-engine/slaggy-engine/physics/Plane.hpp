@@ -2,7 +2,7 @@
 #ifndef PLANE_HPP
 #define PLANE_HPP
 
-#include <collision/IIntersect.hpp>
+#include <physics/IIntersect.hpp>
 
 #include <glm/glm.hpp>
 

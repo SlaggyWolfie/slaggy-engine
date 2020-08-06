@@ -5,7 +5,6 @@
 #include <glm/ext/matrix_transform.hpp>
 
 #include <utils/BoxDebug.hpp>
-#include "collision/Geometry.hpp"
 
 namespace slaggy
 {

@@ -1,6 +1,6 @@
 #include "AABB.hpp"
 
-#include <collision/Geometry.hpp>
+#include <physics/Geometry.hpp>
 
 namespace slaggy
 {

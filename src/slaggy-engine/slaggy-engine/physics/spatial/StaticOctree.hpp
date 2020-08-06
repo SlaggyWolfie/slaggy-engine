@@ -2,7 +2,7 @@
 #ifndef STATIC_OCTREE_HPP
 #define STATIC_OCTREE_HPP
 
-#include <collision/volumes/AABB.hpp>
+#include <physics/volumes/AABB.hpp>
 
 #include <array>
 #include <vector>

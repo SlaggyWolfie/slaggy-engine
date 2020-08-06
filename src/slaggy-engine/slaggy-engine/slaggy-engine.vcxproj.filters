@@ -45,30 +45,6 @@
     <ClCompile Include="programs\CoreTestProgram.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="collision\volumes\AABB.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="collision\volumes\Box.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="collision\volumes\OBB.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="collision\volumes\Shape.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="collision\volumes\Sphere.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="collision\Geometry.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="collision\spatial\Octree.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="collision\spatial\StaticOctree.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="core\Component.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -93,46 +69,58 @@
     <ClCompile Include="utils\Random.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="collision\colliders\SphereCollider.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="utils\SphereDebug.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="utils\Icosphere.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="collision\CollisionManager.cpp">
+    <ClCompile Include="physics\colliders\SphereCollider.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="collision\spatial\SpatialPartitioningTree.cpp">
+    <ClCompile Include="physics\spatial\BSPTree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="collision\spatial\BSPTree.cpp">
+    <ClCompile Include="physics\spatial\KDTree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="collision\spatial\KDTree.cpp">
+    <ClCompile Include="physics\spatial\Octree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="collision\SuperPlane.cpp">
+    <ClCompile Include="physics\spatial\SpatialPartitioningTree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="collision\PointPlane.cpp">
+    <ClCompile Include="physics\spatial\StaticOctree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="collision\Plane.cpp">
+    <ClCompile Include="physics\volumes\AABB.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Log.cpp">
+    <ClCompile Include="physics\volumes\Box.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="programs\SpatialTestingProgram.cpp">
+    <ClCompile Include="physics\volumes\OBB.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="programs\LoggingNoRenderingProgram.cpp">
+    <ClCompile Include="physics\volumes\Shape.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="programs\LoggingProgram.cpp">
+    <ClCompile Include="physics\volumes\Sphere.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="physics\CollisionManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="physics\Geometry.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="physics\Plane.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="physics\PointPlane.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="physics\SuperPlane.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -167,30 +155,6 @@
     <ClInclude Include="programs\CoreTestProgram.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="collision\volumes\AABB.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="collision\volumes\Box.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="collision\volumes\OBB.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="collision\volumes\Shape.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="collision\volumes\Sphere.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="collision\Geometry.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="collision\spatial\Octree.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="collision\spatial\StaticOctree.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="core\Component.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -215,52 +179,64 @@
     <ClInclude Include="utils\Random.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="collision\colliders\SphereCollider.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="utils\SphereDebug.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="utils\Icosphere.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="collision\CollisionManager.hpp">
+    <ClInclude Include="physics\colliders\SphereCollider.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="collision\spatial\SpatialPartitioningTree.hpp">
+    <ClInclude Include="physics\spatial\BSPTree.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="collision\CollisionPair.hpp">
+    <ClInclude Include="physics\spatial\KDTree.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="collision\spatial\BSPTree.hpp">
+    <ClInclude Include="physics\spatial\Octree.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="collision\spatial\KDTree.hpp">
+    <ClInclude Include="physics\spatial\SpatialPartitioningTree.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="collision\SuperPlane.hpp">
+    <ClInclude Include="physics\spatial\StaticOctree.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="collision\PointPlane.hpp">
+    <ClInclude Include="physics\volumes\AABB.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="collision\Plane.hpp">
+    <ClInclude Include="physics\volumes\Box.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="collision\IIntersect.hpp">
+    <ClInclude Include="physics\volumes\OBB.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Log.hpp">
+    <ClInclude Include="physics\volumes\Shape.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="programs\SpatialTestingProgram.hpp">
+    <ClInclude Include="physics\volumes\Sphere.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="programs\LoggingNoRenderingProgram.hpp">
+    <ClInclude Include="physics\CollisionManager.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="programs\LoggingProgram.hpp">
+    <ClInclude Include="physics\CollisionPair.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="physics\Geometry.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="physics\IIntersect.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="physics\Plane.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="physics\PointPlane.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="physics\SuperPlane.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

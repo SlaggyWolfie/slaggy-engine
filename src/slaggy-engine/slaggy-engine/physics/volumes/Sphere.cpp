@@ -1,6 +1,6 @@
 #include "Sphere.hpp"
 
-#include <collision/Geometry.hpp>
+#include <physics/Geometry.hpp>
 #include <utils/SphereDebug.hpp>
 
 namespace slaggy

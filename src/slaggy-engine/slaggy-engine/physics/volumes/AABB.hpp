@@ -3,7 +3,7 @@
 #ifndef AABB_HPP
 #define AABB_HPP
 
-#include <collision/volumes/Box.hpp>
+#include <physics/volumes/Box.hpp>
 
 namespace slaggy
 {

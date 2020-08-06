@@ -1,7 +1,7 @@
 #include "SphereDebug.hpp"
 
 #include <engine/Shader.hpp>
-#include <collision/volumes/Sphere.hpp>
+#include <physics/volumes/Sphere.hpp>
 
 #include <utils/Icosphere.h>
 

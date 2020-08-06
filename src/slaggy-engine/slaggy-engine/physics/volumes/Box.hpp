@@ -2,7 +2,7 @@
 #ifndef BB_HPP
 #define BB_HPP
 
-#include <collision/volumes/Shape.hpp>
+#include <physics/volumes/Shape.hpp>
 
 namespace slaggy
 {

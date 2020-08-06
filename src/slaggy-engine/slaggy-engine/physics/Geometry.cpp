@@ -4,10 +4,10 @@
 
 #include <core/Entity.hpp>
 
-#include <collision/volumes/Sphere.hpp>
-#include <collision/volumes/AABB.hpp>
-#include <collision/volumes/OBB.hpp>
-#include <collision/Plane.hpp>
+#include <physics/volumes/Sphere.hpp>
+#include <physics/volumes/AABB.hpp>
+#include <physics/volumes/OBB.hpp>
+#include <physics/Plane.hpp>
 
 namespace slaggy
 {

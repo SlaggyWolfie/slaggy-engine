@@ -3,7 +3,7 @@
 #define COLLISION_MANAGER_HPP
 #include <memory>
 #include <vector>
-#include <collision/spatial/Octree.hpp>
+#include <physics/spatial/Octree.hpp>
 
 namespace slaggy
 {

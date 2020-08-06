@@ -2,11 +2,11 @@
 #ifndef BSP_TREE_HPP
 #define BSP_TREE_HPP
 
-#include <collision/spatial/SpatialPartitioningTree.hpp>
+#include <physics/spatial/SpatialPartitioningTree.hpp>
 
 #include <unordered_set>
 
-#include <collision/PointPlane.hpp>
+#include <physics/PointPlane.hpp>
 
 namespace slaggy
 {

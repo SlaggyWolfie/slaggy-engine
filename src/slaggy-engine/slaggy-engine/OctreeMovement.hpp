@@ -5,7 +5,7 @@
 #include <core/Behavior.hpp>
 
 #include <glm/glm.hpp>
-#include "collision/volumes/AABB.hpp"
+#include <physics/volumes/AABB.hpp>
 
 namespace slaggy
 {

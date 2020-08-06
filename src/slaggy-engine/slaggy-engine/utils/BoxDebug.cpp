@@ -4,7 +4,7 @@
 
 #include <engine/Shader.hpp>
 
-#include <collision/volumes/Box.hpp>
+#include <physics/volumes/Box.hpp>
 
 namespace slaggy
 {

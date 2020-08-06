@@ -1,10 +1,10 @@
 #include "CollisionManager.hpp"
 
-#include <collision/Geometry.hpp>
+#include <physics/Geometry.hpp>
 #include <OctreeMovement.hpp>
 #include <core/Component.hpp>
 #include <core/Entity.hpp>
-#include <collision/colliders/SphereCollider.hpp>
+#include <physics/colliders/SphereCollider.hpp>
 
 namespace slaggy
 {
