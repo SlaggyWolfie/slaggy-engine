@@ -5,31 +5,8 @@
 namespace slaggy
 {
 	std::string Log::output_path;
-	std::unique_ptr<Log> Log::_current = nullptr;
 
-	Log& Log::start()
-	{
-		_current = std::make_unique<Log>();
-		return *_current;
-	}
-
-	Log Log::end()
-	{
-		if (!output_path.empty())
-			output(output_path + _current->treeType + std::to_string(_current->maxDepth) + ".csv");
-
-		Log log = *_current;
-		_current = nullptr;
-
-		return log;
-	}
-
-	Log& Log::current()
-	{
-		return *_current;
-	}
-
-	std::vector<std::vector<std::string>> Log::serialize()
+	std::vector<std::vector<std::string>> Log::serialize() const
 	{
 		std::vector<std::vector<std::string>> output;
 
@@ -80,9 +57,10 @@ namespace slaggy
 		file.close();
 	}
 
-	void Log::output(const std::string& path)
+	void Log::output(const Log& log)
 	{
-		output(_current->serialize(), path);
+		if (!output_path.empty())
+			output(log.serialize(), output_path + log.treeType + std::to_string(log.maxDepth) + ".csv");
 	}
 
 	void Log::takeSnapshot()

@@ -5,6 +5,7 @@
 #include <memory>
 #include <vector>
 #include <string>
+#include <algorithm>
 
 namespace slaggy
 {
@@ -12,13 +13,9 @@ namespace slaggy
 	{
 	public:
 		static std::string output_path;
-		
-		static Log& start();
-		static Log& current();
-		static Log end();
 
 		static void output(std::vector<std::vector<std::string>> const& data, const std::string& path);
-		static void output(const std::string& path);
+		static void output(const Log& log);
 
 		template <typename T>
 		static T average(const std::vector<T>& values);
@@ -38,10 +35,7 @@ namespace slaggy
 		std::vector<Snapshot> data{ };
 
 		void takeSnapshot();
-		std::vector<std::vector<std::string>> serialize();
-
-	private:
-		static std::unique_ptr<Log> _current;
+		[[nodiscard]] std::vector<std::vector<std::string>> serialize() const;
 	};
 
 	template <typename T>
@@ -53,5 +47,40 @@ namespace slaggy
 
 		return average;
 	}
+
+	template<>
+	inline Log::Snapshot Log::average(const std::vector<Log::Snapshot>& values)
+	{
+		Snapshot average;
+		for (const auto& snapshot : values)
+		{
+			average.frame = std::max(average.frame, snapshot.frame);
+			average.calculationTime = snapshot.calculationTime;
+			average.collisionTests = snapshot.collisionTests;
+		}
+
+		average.calculationTime /= values.size();
+		average.collisionTests /= values.size();
+
+		return average;
+	}
+
+	template<>
+	inline Log Log::average(const std::vector<Log>& values)
+	{
+		Log average = values[0];
+		std::vector<std::vector<Log::Snapshot>> snapshots;
+		
+		// TODO
+		for (unsigned i = 0; i < values.size(); ++i)
+		{
+			for (unsigned j = 0; j < values[i].data.size(); ++j)
+			{
+				//snapshots.
+			}
+		}
+
+		return average;
+	}	
 }
 #endif

@@ -114,165 +114,170 @@ namespace slaggy
 		tests.emplace_back(TreeType::BSPTREE, 3);
 		tests.emplace_back(TreeType::BSPTREE, 7);
 
-		//for (unsigned i = 0; i < 3; ++i)
-		//{
-		//	const auto type = static_cast<TreeType>(i);
-		//	for (unsigned j = 1; j < 10; ++j)
-		//	{
-		//		tests.emplace_back(type, j);
-		//	}
-		//}
-
 		// sim setup
 		const unsigned simulationFrames = 2000;
 		const unsigned objectAmount = 1000;
+		unsigned repetitions = 10;
 		Random::setSeed(7777777);
 
-		int repetition = 0;
+		unsigned testNumber = 0;
+
 		for (const auto& test : tests)
 		{
-			repetition++;
-			if (glfwWindowShouldClose(window)) break;
-
-			// Tree setup
-			std::unique_ptr<SpatialPartitioningTree> tree = nullptr;
-
-			switch (test.first)
+			std::vector<Log> logs;
+			
+			for (; repetitions > 0; --repetitions)
 			{
-			case TreeType::OCTREE: tree = std::make_unique<Octree>(); break;
-			case TreeType::KDTREE: tree = std::make_unique<KDTree>(); break;
-			case TreeType::BSPTREE: tree = std::make_unique<BSPTree>(); break;
-			default: return -1;
-			}
+				testNumber++;
+				std::vector<Log::Snapshot> snapshots;
+				if (glfwWindowShouldClose(window)) break;
 
-			tree->initialize(glm::vec3(0), glm::vec3(5), test.second);
+				// Tree setup
+				std::unique_ptr<SpatialPartitioningTree> tree = nullptr;
 
-			// logging setup
-			Log& log = Log::start();
-			log.treeType = treeTypes[test.first];
-			log.maxDepth = test.second;
-			std::cout << "Test #" << repetition << " Start: (" << log.treeType << ", maximum depth " << log.maxDepth << ")" << std::endl;
-
-			// containers
-			std::vector<std::unique_ptr<Entity>> objects;
-			std::vector<Shape*> shapeColliders;
-			std::vector<OctreeMovement*> movers;
-
-			// Program Loop (Render Loop)
-			const unsigned fixedTargetFramerate = 50;
-			const float fixedTimerPerFrame = 1.0f / fixedTargetFramerate;
-
-			unsigned fixedFrames = 0, frames = 0, fixedUpdates = 0;
-			double lag = 0;
-
-			double lastFrame = glfwGetTime();
-			double timer = lastFrame;
-
-			// Camera & Rendering setup
-			camera = new Camera(glm::vec3(0, 0, 20));
-			glm::mat4 view = glm::mat4(1);
-			glm::mat4 projection = glm::mat4(1);
-
-			while (fixedFrames < simulationFrames && !glfwWindowShouldClose(window))
-			{
-				// time
-				auto currentFrame = glfwGetTime();
-				deltaTime = currentFrame - lastFrame;
-				lastFrame = currentFrame;
-				lag += deltaTime;
-
-				// input
-				process_exit_input(window);
-				//process_input(window);
-
-				// fixed update
-				while (lag >= fixedTimerPerFrame)
+				switch (test.first)
 				{
-					if (fixedFrames < objectAmount)
-						createObject(objects, shapeColliders, movers, *dynamic_cast<AABB*>(tree.get()),
-							glm::vec3(0), 4, 0.1f, 0.2f);
-
-					for (auto mover : movers) mover->fixedUpdate();
-
-					tree->startSplit(shapeColliders);
-
-					double collisionTestTime = glfwGetTime();
-
-						auto collisions = tree->collisions();
-
-					collisionTestTime = glfwGetTime() - collisionTestTime;
-
-					CollisionManager::resolve(collisions);
-
-					fixedFrames++;
-					fixedUpdates++;
-					lag -= fixedTimerPerFrame;
-
-					log.snapshot.frame = fixedFrames;
-					// usually in seconds
-					// but now measuring in ns because it's too small
-					log.snapshot.calculationTime = collisionTestTime * 1000000; 
-					log.snapshot.collisionTests = collisions.size();
-
-					log.takeSnapshot();
+				case TreeType::OCTREE: tree = std::make_unique<Octree>(); break;
+				case TreeType::KDTREE: tree = std::make_unique<KDTree>(); break;
+				case TreeType::BSPTREE: tree = std::make_unique<BSPTree>(); break;
+				default: return -1;
 				}
 
-				// potential update here
-				// potential late update here
+				tree->initialize(glm::vec3(0), glm::vec3(5), test.second);
 
-				// rendering
-				view = camera->viewMatrix();
-				projection = glm::perspective(glm::radians(camera->fov),
-					float(INITIAL_SCREEN_WIDTH) / float(INITIAL_SCREEN_HEIGHT), 0.1f, 100.0f);
+				// logging setup
+				Log& log = Log::start();
+				log.treeType = treeTypes[test.first];
+				log.maxDepth = test.second;
+				std::cout << "Test #" << testNumber << " Start: (" << log.treeType << ", maximum depth " << log.maxDepth << ")" << std::endl;
 
-				glClearColor(_clearColor.r, _clearColor.g, _clearColor.b, _clearColor.a);
-				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+				// containers
+				std::vector<std::unique_ptr<Entity>> objects;
+				std::vector<Shape*> shapeColliders;
+				std::vector<OctreeMovement*> movers;
 
-				// draw something
-				//o.render(glm::vec3(0), view, projection);
-				tree->renderNodes(view, projection);
+				// Program Loop (Render Loop)
+				const unsigned fixedTargetFramerate = 50;
+				const float fixedTimerPerFrame = 1.0f / fixedTargetFramerate;
 
-				for (auto shapeCollider : shapeColliders)
-					shapeCollider->render(glm::vec3(0, 0, 1), view, projection);
+				unsigned fixedFrames = 0, frames = 0, fixedUpdates = 0;
+				double lag = 0;
 
-				frames++;
+				double lastFrame = glfwGetTime();
+				double timer = lastFrame;
 
-				// reset every second
-				currentFrame = glfwGetTime();
-				if (currentFrame - timer > 1)
+				// Camera & Rendering setup
+				camera = new Camera(glm::vec3(0, 0, 20));
+				glm::mat4 view = glm::mat4(1);
+				glm::mat4 projection = glm::mat4(1);
+
+				while (fixedFrames < simulationFrames && !glfwWindowShouldClose(window))
 				{
-					timer++;
-					std::cout << "\tFPS: ";
-					if (frames != 1) std::cout << frames;
-					else
-					{
-						const float lowFrames = float(fixedTargetFramerate) / float(fixedUpdates);
-						std::cout << lowFrames;
+					// time
+					auto currentFrame = glfwGetTime();
+					deltaTime = currentFrame - lastFrame;
+					lastFrame = currentFrame;
+					lag += deltaTime;
 
-						if (lowFrames < 1)
+					// input
+					process_exit_input(window);
+					//process_input(window);
+
+					// fixed update
+					while (lag >= fixedTimerPerFrame)
+					{
+						if (fixedFrames < objectAmount)
+							createObject(objects, shapeColliders, movers, *dynamic_cast<AABB*>(tree.get()),
+								glm::vec3(0), 4, 0.1f, 0.2f);
+
+						for (auto mover : movers) mover->fixedUpdate();
+
+						double collisionTestTime = glfwGetTime();
+						tree->startSplit(shapeColliders);
+						auto collisions = tree->collisions();
+						collisionTestTime = glfwGetTime() - collisionTestTime;
+
+						CollisionManager::resolve(collisions);
+
+						fixedFrames++;
+						fixedUpdates++;
+						lag -= fixedTimerPerFrame;
+
+						Log::Snapshot snap;
+						snap.frame = fixedFrames;
+						// usually in seconds
+						// but now measuring in ms because it's too small
+						snap.calculationTime = collisionTestTime * 1000;
+						snap.collisionTests = collisions.size();
+						snapshots.push_back(snap);
+
+						if (fixedFrames % 10 == 0)
 						{
-							log.success = false;
-							fixedFrames = -1;
+							log.snapshot = Log::average(snapshots);
+							snapshots.clear();
+
+							log.takeSnapshot();
 						}
 					}
 
-					std::cout << " | Fixed Updates: "
-						<< fixedUpdates << " | Second: " << static_cast<int>(currentFrame) << std::endl;
-					fixedUpdates = 0, frames = 0;
+					// potential update here
+					// potential late update here
+
+					// rendering
+					view = camera->viewMatrix();
+					projection = glm::perspective(glm::radians(camera->fov),
+						float(INITIAL_SCREEN_WIDTH) / float(INITIAL_SCREEN_HEIGHT), 0.1f, 100.0f);
+
+					glClearColor(_clearColor.r, _clearColor.g, _clearColor.b, _clearColor.a);
+					glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+					// draw something
+					//o.render(glm::vec3(0), view, projection);
+					tree->renderNodes(view, projection);
+
+					for (auto shapeCollider : shapeColliders)
+						shapeCollider->render(glm::vec3(0, 0, 1), view, projection);
+
+					frames++;
+
+					// reset every second
+					currentFrame = glfwGetTime();
+					if (currentFrame - timer > 1)
+					{
+						timer++;
+						std::cout << "\tFPS: ";
+						if (frames != 1) std::cout << frames;
+						else
+						{
+							const float lowFrames = float(fixedTargetFramerate) / float(fixedUpdates);
+							std::cout << lowFrames;
+
+							if (lowFrames < 1)
+							{
+								log.success = false;
+								fixedFrames = -1;
+							}
+						}
+
+						std::cout << " | Fixed Updates: "
+							<< fixedUpdates << " | Second: " << static_cast<int>(currentFrame) << std::endl;
+						fixedUpdates = 0, frames = 0;
+					}
+
+					// double buffering, and poll IO events
+					glfwSwapBuffers(window);
+					glfwPollEvents();
 				}
 
-				// double buffering, and poll IO events
-				glfwSwapBuffers(window);
-				glfwPollEvents();
+				// Clean-up!
+				delete camera;
+
+				std::cout << "Test #" << testNumber << " End: (" << log.treeType << ", maximum depth " << log.maxDepth << ")";
+				if (log.success) std::cout << std::endl;
+				else std::cout << " - Early End" << std::endl;
 			}
 
-			// Clean-up!
-			delete camera;
-
-			log = Log::end();
-			std::cout << "Test #" << repetition << " End: (" << log.treeType << ", maximum depth " << log.maxDepth << ")";
-			if (log.success) std::cout << std::endl;
-			else std::cout << " - Early End" << std::endl;
+			Log::output(Log::average(logs));
 		}
 
 		glfwTerminate();
@@ -338,7 +343,7 @@ namespace slaggy
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 			glfwSetWindowShouldClose(window, true);
 	}
-	
+
 	void LoggingProgram::process_input(GLFWwindow* window)
 	{
 		if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
